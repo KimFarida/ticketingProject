@@ -1,34 +1,27 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 import uuid
+from phonenumber_field.modelfields import PhoneNumberField
 
 class User(AbstractUser):
+    #Fields from Abstract User
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    login_id = models.CharField(max_length=6, unique=True)
+
+    #Custom Fields
+    login_id = models.CharField(max_length=7, unique=True)
     gender = models.CharField(max_length=1, null=True, blank=True)
     role = models.CharField(max_length=20, choices=[
         ('Admin', 'Admin'),
         ('Merchant', 'Merchant'),
         ('Agent', 'Agent'),
     ])
+    phone_number = PhoneNumberField(blank=True, help_text="Contact phone number")
+    address = models.TextField(blank=True)
 
-    # Add related_name to avoid clashes with auth.User
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name='groups',
-        related_name='custom_user_set',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        related_query_name="user",
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='custom_user_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-        related_query_name="user",
-    )
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
 class Merchant(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,6 +36,7 @@ class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wallet')
     voucher_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     bonus_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    #account_number = models.IntegerField(max_length=10, null=True, blank=True)
 
 class Voucher(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -62,7 +56,7 @@ class Ticket(models.Model):
     ticket_id = models.CharField(max_length=20, unique=True)
     buyer_name = models.CharField(max_length=50)
     buyer_contact = models.CharField(max_length=50)
-    agent_id = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='tickets')
+    agent_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     valid =models.BooleanField(default=False)
