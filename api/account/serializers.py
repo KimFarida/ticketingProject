@@ -1,8 +1,13 @@
-from django.contrib.auth import authenticate
+import uuid
+
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.middleware import get_user
 from rest_framework import serializers
+from django.db.models import Q
+
+from api import models
 from api.models import  User
 from api.utilities import generate_loginid
-from phonenumber_field.phonenumber import PhoneNumber
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,21 +54,24 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class UserLoginSerializer(serializers.Serializer):
-    login_id = serializers.CharField()
+    email_or_login_id = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
-        login_id = attrs.get('login_id')
+        email_or_login_id = attrs.get('email_or_login_id')
         password = attrs.get('password')
 
-        try:
-            user = User.objects.get(login_id=login_id)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("Invalid login_id")
+        if email_or_login_id and password:
+            try:
+                user = User.objects.get(Q(email=email_or_login_id) | Q(login_id=email_or_login_id))
+            except User.DoesNotExist:
+                raise serializers.ValidationError("No user found with this email or login ID.")
 
-        user = authenticate(username=user.login_id, password=password)
+            authenticated_user = authenticate(username=user.username, password=password)
 
-        if not user:
-            raise serializers.ValidationError("Invalid login_id or password")
+            if not authenticated_user:
+                raise serializers.ValidationError("Unable to log in with provided credentials.")
 
-        return user
+            return  authenticated_user
+        else:
+            raise serializers.ValidationError("Must include 'email_or_login_id' and 'password'.")
