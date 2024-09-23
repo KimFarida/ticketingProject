@@ -1,0 +1,114 @@
+/* Page container */
+.container {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+background-color: #f4f6f9;
+}
+
+/* Form container */
+.form {
+    background-color: #0c1d55;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
+    color: white;
+    width: 300px;
+    text-align: center;
+}
+
+.form h1 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+.form label {
+    font-size: 14px;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="tel"],
+.form select {
+    width: 100%;
+    padding: 5px 0;
+    margin: 6px 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    font-size: 14px;
+}
+
+.form select{
+    background-color: #0c1d55;
+    font-size: 12px;
+}
+
+.form select option{
+    font-size: 8px;
+}
+
+.form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form button {
+    background-color: #f3f3f3;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.form button:hover {
+    background-color: #d3d3d3;
+}
+
+.signInLink {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+  
+.signInLink:hover {
+    text-decoration: underline;
+    color: #e6ebf8;
+}
+  
+.signInLink:active {
+    color: #e6ebf8;
+}
+  
+
+/* Error and success messages */
+.form p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* Header styling */
+.header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+
+}
+
+.header span {
+    color: #0c1d55;
+}
