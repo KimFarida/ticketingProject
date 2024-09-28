@@ -10,9 +10,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from .serializers import UserSerializer, UserLoginSerializer, PasswordResetSerializer, PasswordResetRequestSerializer
-from api.models import User
+from drf_yasg.utils import swagger_auto_schema
 
 
+@swagger_auto_schema(methods=["POST"], request_body=UserLoginSerializer)
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
@@ -22,6 +23,7 @@ def register(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED,)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(methods=["POST"], request_body=UserLoginSerializer)
 @api_view(['POST'])
 def login(request):
     """
@@ -57,7 +59,7 @@ def login(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@swagger_auto_schema(methods=["POST"], request_body=UserLoginSerializer)
 @api_view(['POST'])
 @permission_classes((IsAuthenticated,))
 def logout(request):
@@ -68,7 +70,7 @@ def logout(request):
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@swagger_auto_schema(methods=["POST"], request_body=PasswordResetRequestSerializer)
 @api_view(['POST'])
 def request_password_reset(request):
     """
@@ -101,6 +103,7 @@ def request_password_reset(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(methods=["POST"], request_body=PasswordResetSerializer)
 @api_view(['POST'])
 def reset_password_confirm(request):
     serializer = PasswordResetSerializer(data=request.data)
