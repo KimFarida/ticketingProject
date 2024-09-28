@@ -12,7 +12,7 @@ db.sqlite3
 db.sqlite3-journal
 
 # Environment variables
-.env
+ticketing_api/.env
 
 # Virtual environment
 venv/

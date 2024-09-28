@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "api",
     'phonenumber_field',
-    'drf_yasg'
+    'drf_yasg',
 
 ]
 
@@ -137,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -155,3 +155,12 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "api.User"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #"django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 465
+# EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.getenv("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")

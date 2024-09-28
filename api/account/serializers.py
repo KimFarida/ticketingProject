@@ -1,9 +1,13 @@
 import uuid
+from base64 import urlsafe_b64encode
 
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.contrib.auth.middleware import get_user
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import serializers
 from django.db.models import Q
+from uuid import UUID
 
 from api import models
 from api.models import  User
@@ -37,11 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
             login_id=login_id,
-
-
-
         )
-
 
         user.first_name = validated_data['first_name']
         user.last_name = validated_data['last_name']
@@ -75,3 +75,45 @@ class UserLoginSerializer(serializers.Serializer):
             return  authenticated_user
         else:
             raise serializers.ValidationError("Must include 'email_or_login_id' and 'password'.")
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        try:
+            user = User.objects.get(email=email)
+            attrs['user'] = user
+        except User.DoesNotExist:
+            raise serializers.ValidationError("No user found with this email.")
+        return attrs
+
+class PasswordResetSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    uid = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        uid = attrs.get('uid')
+        token = attrs.get('token')
+        new_password = attrs.get('new_password')
+
+        #Decode
+        try:
+
+            uid = urlsafe_base64_decode(uid).decode('utf-8')
+            user = User.objects.get(pk=UUID(uid))
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            raise serializers.ValidationError("Invalid Token")
+
+        token_generator = PasswordResetTokenGenerator()
+        if not token_generator.check_token(user, token):
+            raise serializers.ValidationError("Invalid or expired Token")
+
+
+    def save(self):
+        user = self.validated_data['user']
+        new_password = self.validated_data['new_password']
+        user.set_password(new_password)
+        user.save()
+        return user
