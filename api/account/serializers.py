@@ -1,17 +1,14 @@
-import uuid
-from base64 import urlsafe_b64encode
-
 from django.contrib.auth import authenticate
-from django.contrib.auth.middleware import get_user
+from django.contrib.auth.models import Group
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from django.db.models import Q
 from uuid import UUID
 
-from api import models
 from api.models import  User
 from api.utilities import generate_loginid
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,6 +48,9 @@ class UserSerializer(serializers.ModelSerializer):
         user.role = "Agent"
 
         user.save()
+
+        agent_group, _ = Group.objects.get_or_create(name='Agents')
+        user.groups.add(agent_group)
         return user
 
 class UserLoginSerializer(serializers.Serializer):
@@ -110,6 +110,8 @@ class PasswordResetSerializer(serializers.Serializer):
         if not token_generator.check_token(user, token):
             raise serializers.ValidationError("Invalid or expired Token")
 
+        attrs['user'] = user
+        return attrs
 
     def save(self):
         user = self.validated_data['user']

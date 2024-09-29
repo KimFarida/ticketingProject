@@ -14,9 +14,25 @@ class User(AbstractUser):
         ('Admin', 'Admin'),
         ('Merchant', 'Merchant'),
         ('Agent', 'Agent'),
-    ])
+    ], default='Agent')
     phone_number = PhoneNumberField(blank=True, help_text="Contact phone number")
     address = models.TextField(blank=True)
+
+    def save(self, *args, **kwargs):
+        # Call save on the parent class (AbstractUser)
+        super().save(*args, **kwargs)
+
+        # Automatically assign Agent group on user creation
+        if self.pk and not self.groups.filter(name='Merchants').exists():
+            agent_group, _ = Group.objects.get_or_create(name='Agents')
+            self.groups.add(agent_group)
+
+        # If user role changes to Merchant, update groups
+        if self.role == 'Merchant':
+            merchant_group, _ = Group.objects.get_or_create(name='Merchants')
+            agent_group, _ = Group.objects.get_or_create(name='Agents')
+            self.groups.remove(agent_group)
+            self.groups.add(merchant_group)
 
 
     class Meta:

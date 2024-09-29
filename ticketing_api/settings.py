@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import ssl
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -111,6 +112,22 @@ DATABASES = {
         }
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "defaultdb",
+#         "USER": "avnadmin",
+#         "PASSWORD": "AVNS_3XHg1f3V36xwii5RA0P",
+#         "HOST": "mysql-1723ea0d-farimomoh-ec40.g.aivencloud.com",
+#         "PORT": "21355",
+#         "OPTIONS": {
+#             "ssl": {"ca": ssl.SSLContext(ssl.PROTOCOL_TLS).load_verify_locations(cadata=os.getenv('CADATA')),
+#             },
+#         },
+#     }
+# }
+
 
 
 # Password validation

@@ -30,3 +30,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Migreation files
+*api/migrations/
+migrations/
