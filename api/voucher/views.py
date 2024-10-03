@@ -6,16 +6,24 @@ from api.account.permissions import IsAdmin, IsMerchant, IsAgent
 from api.models import Voucher
 from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
-
+processed_param = openapi.Parameter(
+    'processed',
+    openapi.IN_QUERY,
+    description="Filter by processed status (true or false).",
+    type=openapi.TYPE_BOOLEAN,
+    required=False
+)
 @swagger_auto_schema(
     method='GET',
+    manual_parameters=[processed_param],
     responses={200: VoucherListSerializer(many=True)}
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsMerchant | IsAdmin])
-def sold_vouchers(request):
+def created_vouchers(request):
     """
     Retrieve all vouchers sold by the authenticated merchant/admin.
 
@@ -25,9 +33,13 @@ def sold_vouchers(request):
     - `401 Unauthorized`: Authentication credentials were not provided.
     """
     merchant = request.user
+    processed = request.query_params.get('processed', None)
 
     # Fetch all vouchers where the merchant is the seller
     vouchers = Voucher.objects.filter(seller=merchant)
+
+    if processed:
+        vouchers = vouchers.filter(processed=(processed.lower() == 'true'))
 
     # Serialize the vouchers
     serializer = VoucherListSerializer(vouchers, many=True)
@@ -37,11 +49,12 @@ def sold_vouchers(request):
 
 @swagger_auto_schema(
     method='GET',
+    manual_parameters=[processed_param],
     responses={200: VoucherListSerializer(many=True)}
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def bought_vouchers(request):
+def issued_vouchers(request):
     """
     Retrieve all vouchers bought by the authenticated userc.
 
@@ -51,9 +64,13 @@ def bought_vouchers(request):
     - `401 Unauthorized`: Authentication credentials were not provided.
     """
     user = request.user
+    processed = request.query_params.get('processed', None)
 
     # Fetch all vouchers where the user is the buyer
     vouchers = Voucher.objects.filter(owner=user)
+
+    if processed:
+        vouchers = vouchers.filter(processed=(processed.lower() == 'true'))
 
     # Serialize the vouchers
     serializer = VoucherListSerializer(vouchers, many=True)
@@ -196,7 +213,7 @@ def process_voucher(request):
                 buyer = voucher.owner
                 buyer_wallet = Wallet.objects.get(user=voucher.owner)
 
-                bonus_percentage = Decimal('0.05') if buyer.role == "Agent" else Decimal('0.10')
+                bonus_percentage = Decimal('0.10') if buyer.role == "Agent" else Decimal('0.20')
                 buyer_wallet.voucher_balance += voucher.amount
                 buyer_wallet.bonus_balance += voucher.amount * bonus_percentage
                 buyer_wallet.save()

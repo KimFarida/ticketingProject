@@ -67,12 +67,19 @@ class Voucher(models.Model):
     def __str__(self):
         return self.voucher_code
 
+class TicketType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class Ticket(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ticket_id = models.CharField(max_length=20, unique=True)
     buyer_name = models.CharField(max_length=50)
     buyer_contact = models.CharField(max_length=50)
     agent_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    valid =models.BooleanField(default=False)
+    valid =models.BooleanField(default=True)
