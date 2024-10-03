@@ -6,7 +6,7 @@ from rest_framework import serializers
 from django.db.models import Q
 from uuid import UUID
 
-from api.models import  User
+from api.models import User, Wallet, Agent
 from api.utilities import generate_loginid
 
 
@@ -49,9 +49,28 @@ class UserSerializer(serializers.ModelSerializer):
 
         user.save()
 
+        wallet = Wallet.objects.create(user=user)
+        agent = Agent.objects.create(user=user)
+
         agent_group, _ = Group.objects.get_or_create(name='Agents')
         user.groups.add(agent_group)
-        return user
+
+        response_data = {
+            'id': str(user.id),
+            'login_id': login_id,
+            'wallet_id': str(wallet.id),
+            'wallet_balance': wallet.voucher_balance,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'address': user.address,
+            'phone_number': str(user.phone_number),
+            'gender': user.gender,
+            'role': user.role,
+            'agent_id': str(agent.id),
+        }
+
+        return response_data
 
 class UserLoginSerializer(serializers.Serializer):
     email_or_login_id = serializers.CharField()
@@ -119,3 +138,16 @@ class PasswordResetSerializer(serializers.Serializer):
         user.set_password(new_password)
         user.save()
         return user
+
+
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['id', 'voucher_balance', 'bonus_balance']
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    wallet = WalletSerializer(read_only= True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'phone_number', 'wallet']

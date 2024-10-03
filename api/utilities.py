@@ -20,3 +20,7 @@ def generate_loginid():
 
 def login_id_exist(login_id):
    return User.objects.filter(login_id=login_id).exists()
+
+def generate_voucher_code():
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return "".join(random.choice(chars) for _ in range(10))

@@ -8,9 +8,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from .serializers import UserSerializer, UserLoginSerializer, PasswordResetSerializer, PasswordResetRequestSerializer
+from .serializers import UserSerializer, UserLoginSerializer, PasswordResetSerializer, PasswordResetRequestSerializer, UserDetailsSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from api.models import User
 
 
 @swagger_auto_schema(method='post', request_body=UserSerializer, responses={200: 'Success'})
@@ -41,8 +42,8 @@ def register(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED,)
+            user_data = serializer.save()
+            return Response(user_data, status=status.HTTP_201_CREATED,)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(method='post', request_body=UserLoginSerializer, responses={200: 'Success'})
@@ -169,3 +170,39 @@ def reset_password_confirm(request):
         serializer.save()
         return Response({'message': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    method='GET',
+    responses={200: UserDetailsSerializer},
+    tags=["User Management"],
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_details(request, user_id):
+    """
+    Retrieve detailed information about a user along with their wallet information.
+
+    - `request` (Request): The request object containing the authenticated user.
+    - `user_id` (UUID): The unique identifier of the user whose details are to be retrieved.
+
+    Returns:
+    - `Response`:
+        - On success (200 OK): JSON object containing the user's details, including:
+            - `id`: User's unique identifier.
+            - `username`: User's username.
+            - `first_name`: User's first name.
+            - `last_name`: User's last name.
+            - `email`: User's email address.
+            - `phone_number`: User's phone number.
+            - `wallet`: An object containing wallet details:
+                - `id`: Wallet's unique identifier.
+                - `voucher_balance`: User's current voucher balance.
+                - `bonus_balance`: User's current bonus balance.
+        - On failure (404 Not Found): Error message indicating that the user was not found.
+    """
+    try:
+        user = User.objects.get(id=user_id)
+        serializer = UserDetailsSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
