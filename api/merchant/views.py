@@ -5,27 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 from api.models import Voucher, Wallet
-from .serializer import VoucherProcessSerializer, VoucherListSerializer
+from .serializer import VoucherProcessSerializer
 from drf_yasg.utils import swagger_auto_schema
 from decimal import Decimal
 
-
-@swagger_auto_schema(
-    method='GET',
-    responses={200: VoucherListSerializer(many=True)}
-)
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_merchant_vouchers(request):
-    merchant = request.user
-
-    # Fetch all vouchers where the merchant is the seller
-    vouchers = Voucher.objects.filter(seller=merchant)
-
-    # Serialize the vouchers
-    serializer = VoucherListSerializer(vouchers, many=True)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @swagger_auto_schema(

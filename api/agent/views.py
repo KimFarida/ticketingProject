@@ -10,7 +10,7 @@ from drf_yasg import openapi
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 # @permission_classes([IsAgent])
 def list_all_merchants(request):
     merchants = Merchant.objects.select_related('user').all()

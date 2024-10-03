@@ -2,6 +2,10 @@ from rest_framework import serializers
 from api.models import Voucher, User
 from api.utilities import generate_voucher_code
 
+class VoucherListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Voucher
+        fields = ['id', 'voucher_code', 'owner', 'amount', 'processed', 'created_at']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

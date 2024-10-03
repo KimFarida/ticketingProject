@@ -2,10 +2,47 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from api.account.permissions import IsAdmin, IsMerchant, IsAgent
 from api.models import Voucher
-from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer
+from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer
 from drf_yasg.utils import swagger_auto_schema
 
+
+
+@swagger_auto_schema(
+    method='GET',
+    responses={200: VoucherListSerializer(many=True)}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsMerchant | IsAdmin])
+def sold_vouchers(request):
+    merchant = request.user
+
+    # Fetch all vouchers where the merchant is the seller
+    vouchers = Voucher.objects.filter(seller=merchant)
+
+    # Serialize the vouchers
+    serializer = VoucherListSerializer(vouchers, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@swagger_auto_schema(
+    method='GET',
+    responses={200: VoucherListSerializer(many=True)}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsMerchant | IsAgent])
+def bought_vouchers(request):
+    user = request.user
+
+    # Fetch all vouchers where the user is the buyer
+    vouchers = Voucher.objects.filter(owner=user)
+
+    # Serialize the vouchers
+    serializer = VoucherListSerializer(vouchers, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='POST',

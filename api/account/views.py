@@ -178,7 +178,7 @@ def reset_password_confirm(request):
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_details(request, user_id):
+def get_user_details(request):
     """
     Retrieve detailed information about a user along with their wallet information.
 
@@ -201,7 +201,7 @@ def get_user_details(request, user_id):
         - On failure (404 Not Found): Error message indicating that the user was not found.
     """
     try:
-        user = User.objects.get(id=user_id)
+        user = request.user
         serializer = UserDetailsSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except User.DoesNotExist:

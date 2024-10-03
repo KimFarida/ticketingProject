@@ -6,7 +6,7 @@ class IsAdmin(BasePermission):
 
 class IsMerchant(BasePermission):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name='Merchant').exists()
+        return request.user.role == 'Merchant'
 
 class IsAgent(BasePermission):
     def has_permission(self, request, view):
