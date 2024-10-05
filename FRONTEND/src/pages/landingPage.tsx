@@ -8,6 +8,7 @@ import TextCarousel from '../components/textCarousel';
 import ScrollAnimation from '../components/logoAnimation';
 
 
+
 function LandingPage(){
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -131,7 +132,6 @@ function LandingPage(){
                     </div>
                 </div>
             </footer>
-
         </>
     )
 }

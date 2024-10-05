@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './signUp.css';
 
 import axios from 'axios';
@@ -15,6 +15,12 @@ function SignUpPage() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const navigate = useNavigate();
+
+    const navigator = () =>{
+        navigate ('/admin')
+    }
 
     const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -39,6 +45,9 @@ function SignUpPage() {
             .then(response => {
                 setSuccess('User created successfully!' + response);
                 setError('');
+                setTimeout(() => {
+                    navigate('/admin');  // Change this to the desired page
+                }, 2000); 
             })
             .catch(err => {
                 setError('There was an error signing up.' + err);
@@ -125,7 +134,7 @@ function SignUpPage() {
                     </div>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {success && <p style={{ color: 'green' }}>{success}</p>}
-                    <button type="submit">Sign Up</button>
+                    <button type="submit" onClick={navigator}>Sign Up</button>
 
                     <p>
                         Already have an account? 
