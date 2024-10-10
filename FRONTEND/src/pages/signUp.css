@@ -1,10 +1,11 @@
 /* Page container */
 .container {
-    display: flex;
+    display: grid;
     justify-content: center;
     align-items: center;
     height: auto;
-    width: 100%;
+    width: 100vw;
+    margin-left: 20px;
 }
 
 /* Form container */
@@ -14,7 +15,7 @@
     border-radius: 10px;
     box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
     color: white;
-    width: 450px;
+    width: 475px ;
     text-align: center;
 }
 

@@ -46,7 +46,7 @@ function SignUpPage() {
                 setSuccess('User created successfully!' + response);
                 setError('');
                 setTimeout(() => {
-                    navigate('/admin');  // Change this to the desired page
+                    navigate('/merchant');  // Change this to the desired page
                 }, 2000); 
             })
             .catch(err => {
