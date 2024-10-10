@@ -1,7 +1,10 @@
+import uuid
+import random
+import string
+from datetime import datetime
+from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
-import uuid
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
@@ -86,4 +89,20 @@ class Ticket(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateTimeField(editable=False)
     valid =models.BooleanField(default=True)
+
+class PayoutRequest(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payout_requests')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    requested_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    payment_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 

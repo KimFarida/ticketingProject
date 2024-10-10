@@ -9,6 +9,3 @@ urlpatterns = [
     path('get_voucher/', get_voucher, name='get_voucher'),
     path('process_voucher/', process_voucher, name='process_voucher')
 ]
-#
-# 9e720c19149846d8d19395e9fc830877d729cd6e
-#Q6CxwogifM

@@ -1,9 +1,8 @@
 import random
 import  string
 import uuid
-from api.models import User, Ticket
-
-
+from api.models import User, Ticket, PayoutRequest
+from datetime import datetime
 
 
 def generate_loginid():
@@ -29,9 +28,19 @@ def generate_voucher_code():
     return "".join(random.choice(chars) for _ in range(10))
 
 
-def generate_ticket_id(length=8):
+def generate_ticket_code(length=8):
     while True:
         unique_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
         if not Ticket.objects.filter(ticket_code=unique_id).exists():
             return unique_id
+
+def generate_payment_id():
+    while True:
+        date_str = datetime.now().strftime('%Y%m%d')
+        random_str = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        payment_id = f"PAY{date_str}{random_str}"
+
+        if not PayoutRequest.objects.filter(payment_id=payment_id).exists():
+            return  payment_id
+

@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from api.account.permissions import IsAdmin, IsMerchant, IsAgent
-from api.models import Voucher
-from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer
+from api.models import Voucher, Wallet
+from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer, VoucherProcessSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.db import transaction
+from decimal import Decimal
 
 
 processed_param = openapi.Parameter(
@@ -151,16 +153,6 @@ def get_voucher(request, voucher_):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-from django.db import transaction
-from api.models import Voucher, Wallet
-from .serializer import VoucherProcessSerializer
-from drf_yasg.utils import swagger_auto_schema
-from decimal import Decimal
-from django.db import transaction
 
 
 

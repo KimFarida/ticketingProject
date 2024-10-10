@@ -9,7 +9,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from decimal import Decimal
 from api.models import TicketType, Ticket, Agent
-from api.utilities import generate_ticket_id
 from django.db import transaction
 import traceback
 
@@ -45,7 +44,7 @@ def create_ticket_type(request):
 
     if serializer.is_valid():
         try:
-            ticket_type = serializer.save()
+            serializer.save()
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -134,7 +133,7 @@ def delete_ticket_type(request, pk):
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
+# TODO - Correct json body swagger
 @swagger_auto_schema(
     method='POST',
     request_body=TicketSerializer,
@@ -163,7 +162,7 @@ def create_tickets(request):
 
     user = agent.user
     wallet = agent.user.wallet  # Access the agent's wallet
-    # wallet.voucher_balance += Decimal(100000)
+    # wallet.bonus_balance += Decimal(100000)
     # wallet.save()
     ticket_type_id = request.data.get('ticket_type')
     quantity = int(request.data.get('quantity', 1))  # Default to 1 if not provided
@@ -188,12 +187,10 @@ def create_tickets(request):
         tickets_created = []
         with transaction.atomic():  # Ensure both ticket creation and wallet deduction are atomic
             for _ in range(quantity):
-                ticket_code = generate_ticket_id()
                 ticket_data = {
                     'ticket_type': ticket_type_id,
                     'buyer_name': buyer_name,
                     'buyer_contact': buyer_contact,
-                    'ticket_code': ticket_code
                 }
 
                 # Pass the agent through the context to the serializer

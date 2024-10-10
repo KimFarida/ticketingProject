@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models import TicketType, Ticket
 from django.utils import timezone
+from api.utilities import generate_ticket_code
 
 
 class CreateTicketTypeSerializer(serializers.ModelSerializer):
@@ -50,6 +51,8 @@ class TicketSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Agent information is required to create the ticket.")
 
         # Set the agent and valid_until fields
+        ticket_code = generate_ticket_code()
+        validated_data['ticket_code'] = ticket_code
         validated_data['agent'] = agent
         validated_data['valid_until'] = validated_data['ticket_type'].expiration_date
 
@@ -57,13 +60,3 @@ class TicketSerializer(serializers.ModelSerializer):
         ticket = Ticket.objects.create(**validated_data)
 
         return ticket
-
-
-
-    # def update(self, instance, validated_data):
-    #     ticket_type_id = validated_data.pop('ticket_type')
-    #     ticket_type = TicketType.objects.get(pk=ticket_type_id)
-    #
-    #     instance.ticket_type = ticket_type
-    #     instance.save()
-    #     return instance
