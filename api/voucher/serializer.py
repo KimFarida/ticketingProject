@@ -64,8 +64,6 @@ class CreateVoucherSerializer(serializers.ModelSerializer):
 
         return voucher
 
-from rest_framework import serializers
-from api.models import Voucher
 
 class VoucherProcessSerializer(serializers.Serializer):
     voucher_code = serializers.CharField(max_length=20)

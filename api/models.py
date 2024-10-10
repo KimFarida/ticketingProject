@@ -3,8 +3,8 @@ from django.db import models
 import uuid
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 class User(AbstractUser):
-    #Fields from Abstract User
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     #Custom Fields
@@ -19,7 +19,6 @@ class User(AbstractUser):
     address = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
-        # Call save on the parent class (AbstractUser)
         super().save(*args, **kwargs)
 
         # Automatically assign Agent group on user creation
@@ -68,18 +67,23 @@ class Voucher(models.Model):
         return self.voucher_code
 
 class TicketType(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50, unique=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
+    expiration_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Ticket(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ticket_id = models.CharField(max_length=20, unique=True)
+    ticket_code = models.CharField(max_length=8, unique=True)
     buyer_name = models.CharField(max_length=50)
     buyer_contact = models.CharField(max_length=50)
-    agent_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
+    agent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
     ticket_type = models.ForeignKey(TicketType, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    valid_until = models.DateTimeField(editable=False)
     valid =models.BooleanField(default=True)
+
