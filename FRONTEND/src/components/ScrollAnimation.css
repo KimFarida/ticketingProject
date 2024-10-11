@@ -1,0 +1,21 @@
+/* ScrollAnimation.css */
+.scroll-container {
+    width: 100%;  /* Ensure the container is full width */
+    overflow: hidden;  /* Hide the overflow for the scrolling effect */
+  }
+  
+  .scroll-content {
+    display: flex;
+    justify-content: space-between;
+    animation: scroll 10s linear infinite; /* Apply scrolling animation */
+  }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);  /* Start from the left */
+    }
+    100% {
+      transform: translateX(-50%); /* Scroll by half the content's width */
+    }
+  }
+  
