@@ -66,12 +66,14 @@ const SidebarComponent: React.FC<SidebarProps> = ({menu}) => {
               key={menuItem.id}
               className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
             >
-              <div className="min-w-[40px]">
-                {menuItem.icon}
-              </div>
-              <span className={`${!show ? 'hidden' : ''} origin-left duration-200`}>
-                {menuItem.name}
-              </span>
+              <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
+                <div className="min-w-[40px]">
+                  {menuItem.icon}
+                </div>
+                <span className={`${!show ? 'hidden' : ''} origin-left duration-200`}>
+                  {menuItem.name}
+                </span>
+              </a>
             </li>
           ))}
         </ul>

@@ -25,8 +25,8 @@ function LandingPage(){
                     <div>
                         <h1 className="w-16">X CASH</h1>
                     </div>
-                    <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-white z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
-                        <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+                    <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-gray-500 z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
+                        <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
                             <li><a href="#">Home</a></li>
                             <li><a href="#">Home</a></li>
                             <li><a href="#">Home</a></li>

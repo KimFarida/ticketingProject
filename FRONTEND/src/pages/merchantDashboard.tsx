@@ -1,6 +1,7 @@
 import SidebarComponent from "../components/sidebar";
 import { faChartLine,faHouse, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Card from "../components/card";
 
 
 function MerchantPage() {
@@ -19,7 +20,24 @@ function MerchantPage() {
                 <SidebarComponent menu={menuItems} />
 
                 <div className="flex flex-col flex-1 h-screen overflow-auto p-7">
-                    <h1 className="text-2xl font-semibold mb-6 ">MERCHANT</h1>
+                    <div className="flex items-center justify-between mb-2">
+                        <h1 className="text-2xl font-semibold">MERCHANT</h1>
+                        <p className="text-right text-sm">Balance</p>
+                    </div>
+
+                    {/* Card Section */}
+                    <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-start items-center md:items-start">
+                        <Card
+                        totalAgents={12}
+                        title="Total Vouchers sold"
+                        onClick={() => console.log('View All clicked')}
+                        />
+                        <Card
+                        totalAgents={20}
+                        title="Total Tickets"
+                        onClick={() => console.log('View All clicked')}
+                        />
+                    </div>
                 </div>
             </div>
 
