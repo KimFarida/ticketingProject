@@ -10,7 +10,6 @@ from drf_yasg import openapi
 from api.models import PayoutRequest
 from ..account.permissions import IsAdmin
 from django.db import transaction
-from rest_framework import serializers
 
 
 @swagger_auto_schema(

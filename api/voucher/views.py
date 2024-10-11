@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from api.account.permissions import IsAdmin, IsMerchant, IsAgent
+from api.account.permissions import IsAdmin, IsMerchant
 from api.models import Voucher, Wallet
 from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer, VoucherProcessSerializer
 from drf_yasg.utils import swagger_auto_schema
@@ -37,13 +37,11 @@ def created_vouchers(request):
     merchant = request.user
     processed = request.query_params.get('processed', None)
 
-    # Fetch all vouchers where the merchant is the seller
     vouchers = Voucher.objects.filter(seller=merchant)
 
     if processed:
         vouchers = vouchers.filter(processed=(processed.lower() == 'true'))
 
-    # Serialize the vouchers
     serializer = VoucherListSerializer(vouchers, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -74,7 +72,6 @@ def issued_vouchers(request):
     if processed:
         vouchers = vouchers.filter(processed=(processed.lower() == 'true'))
 
-    # Serialize the vouchers
     serializer = VoucherListSerializer(vouchers, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -154,8 +151,6 @@ def get_voucher(request, voucher_):
 
 
 
-
-
 @swagger_auto_schema(
     method='POST',
     request_body=VoucherProcessSerializer,
@@ -173,15 +168,12 @@ def process_voucher(request):
         voucher_code = serializer.validated_data['voucher_code']
 
         try:
-            # Fetch the voucher
             voucher = Voucher.objects.get(voucher_code=voucher_code)
 
-            # Ensure the merchant is the seller of the voucher
             merchant = request.user
             if voucher.seller != merchant:
                 return Response({"error": "You are not authorized to process this voucher."}, status=status.HTTP_403_FORBIDDEN)
 
-            # Ensure the voucher hasn't already been processed
             if voucher.processed:
                 return Response({"error": "This voucher has already been processed."}, status=status.HTTP_400_BAD_REQUEST)
 
