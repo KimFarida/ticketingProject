@@ -7,13 +7,14 @@ from rest_framework import status
 from .serializer import CreateTicketTypeSerializer, TicketSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from decimal import Decimal
 from api.models import TicketType, Ticket, Agent
 from django.db import transaction
 import traceback
-from datetime import datetime, timedelta
 
 import logging
 
+# Create a logger instance
 logger = logging.getLogger(__name__)
 
 
@@ -160,13 +161,16 @@ def create_tickets(request):
         return Response({"error": "Only agents can create tickets."}, status=status.HTTP_403_FORBIDDEN)
 
     user = agent.user
-    wallet = agent.user.wallet
+    wallet = agent.user.wallet  # Access the agent's wallet
+    # wallet.bonus_balance += Decimal(100000)
+    # wallet.save()
     ticket_type_id = request.data.get('ticket_type')
-    quantity = int(request.data.get('quantity', 1))
+    quantity = int(request.data.get('quantity', 1))  # Default to 1 if not provided
     buyer_name = request.data.get('buyer_name')
     buyer_contact = request.data.get('buyer_contact')
 
     try:
+        # Check if the ticket type exists
         ticket_type = TicketType.objects.get(pk=ticket_type_id)
 
         current_time = timezone.now()
@@ -340,8 +344,6 @@ def check_ticket_validity(request, ticket_code):
             }
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
-            ticket.valid = False
-            ticket.save()
             return Response({"valid": False, "message": "Ticket is invalid or expired."},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -373,13 +375,6 @@ def check_ticket_validity(request, ticket_code):
             type=openapi.TYPE_STRING,
             enum=['today', 'week', 'month'],
         ),
-        openapi.Parameter(
-            'valid',
-            openapi.IN_QUERY,
-            description="Filter tickets by validity.",
-            type=openapi.TYPE_BOOLEAN,
-            enum=[True, False],
-        )
     ],
     responses={
         200: openapi.Response(
@@ -435,7 +430,6 @@ def get_agent_tickets(request):
     start_date = request.query_params.get('start_date')
     end_date = request.query_params.get('end_date')
     period = request.query_params.get('period')
-    valid = request.query_params.get('valid')
 
     if period == 'today':
         today = timezone.now().date()
@@ -450,22 +444,12 @@ def get_agent_tickets(request):
         # Validate and filter by specific date range
         try:
             start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
-            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d')) + timedelta(days=1)
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d')) + timedelta(days=1)  # Inclusive
             tickets = tickets.filter(created_at__range=(start_date, end_date))
         except ValueError:
             return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if valid:
-        valid_bool = valid.lower() == 'true'
-        tickets = tickets.filter(valid=valid_bool)
-
-        for ticket in tickets:
-            if timezone.now() > ticket.valid_until:
-                ticket.valid = False
-                ticket.save()
-
-        tickets = tickets.filter(valid=valid_bool)
+    # Serialize and return the tickets
     ticket_serializer = TicketSerializer(tickets, many=True)
-
 
     return Response({"tickets": ticket_serializer.data}, status=status.HTTP_200_OK)

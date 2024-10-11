@@ -97,6 +97,8 @@ def list_agents(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+
 @swagger_auto_schema(
     method='GET',
     operation_summary="Download Ticket Sales Log",
@@ -175,6 +177,7 @@ def ticket_sales_log(request):
         except (ValueError, TypeError):
             return Response({"error": "Invalid or missing date."}, status=400)
 
+    # Adjust filtering based on period
     if period == 'day':
         start_date = query_date
         end_date = query_date + timezone.timedelta(days=1)
@@ -201,6 +204,7 @@ def ticket_sales_log(request):
             total_amount=Sum('ticket_type__unit_price')
         )
 
+    # Return as JSON
     if output_format == 'json':
         return Response({
             "period": period,
