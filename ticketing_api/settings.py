@@ -89,6 +89,8 @@ SWAGGER_SETTINGS = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    'https://profitplay9ja.com.ng',
+    'https://www.profitplay9ja.com.ng'
 ]
 
 ROOT_URLCONF = "ticketing_api.urls"
