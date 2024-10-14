@@ -198,6 +198,7 @@ def get_user_details(request):
                 - `id`: Wallet's unique identifier.
                 - `voucher_balance`: User's current voucher balance.
                 - `bonus_balance`: User's current bonus balance.
+            - `is_superuser`: User is superuser.
         - On failure (404 Not Found): Error message indicating that the user was not found.
     """
     try:

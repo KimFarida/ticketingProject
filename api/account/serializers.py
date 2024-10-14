@@ -13,7 +13,7 @@ from api.utilities import generate_loginid
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email','address','phone_number','gender','password']
+        fields = ['first_name', 'last_name', 'email','address','phone_number','gender','password', 'is_superuser']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
     def validate(self, attrs):
@@ -68,6 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
             'gender': user.gender,
             'role': user.role,
             'agent_id': str(agent.id),
+            'is_superuser': user.is_superuser
         }
 
         return response_data

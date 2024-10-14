@@ -22,7 +22,7 @@ from django.utils import timezone
 
 )
 @api_view(['POST'])
-@permission_classes([IsAdmin])
+# @permission_classes([IsAdmin])
 def promote_to_merchant(request, user_id):
     """
     Promote an existing user (Agent) to a Merchant.
