@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['102.130.118.149', 'vm659smii.yourlocaldomain.com', '127.0.0.1']
+ALLOWED_HOSTS = ['102.130.118.149', 'profitplay9ja.com.ng', 'www.profitplay9ja.com.ng']
 
 
 # Application definition
