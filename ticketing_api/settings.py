@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['102.130.118.149', 'profitplay9ja.com.ng', 'www.profitplay9ja.com.ng']
+ALLOWED_HOSTS = ['102.130.118.149', 'profitplay9ja.com.ng', 'www.profitplay9ja.com.ng', '127.0.0.1']
 
 
 # Application definition
@@ -232,3 +232,7 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = ['https://profitplay9ja.com.ng']
+
