@@ -72,6 +72,7 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
+   'USE_SESSION_AUTH': False,
    'SECURITY_DEFINITIONS': {
       # 'Basic': {
       #       'type': 'basic'
