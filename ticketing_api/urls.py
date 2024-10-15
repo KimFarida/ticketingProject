@@ -40,7 +40,10 @@ urlpatterns = [
     path('api/voucher/', include('api.voucher.urls')),
     path('api/ticket/', include('api.ticket.urls')),
     path('api/payout/', include('api.payout.urls')),
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-]
+#     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+#     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+#     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+# ]
+    path('api/swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),]
