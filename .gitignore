@@ -34,3 +34,7 @@ Thumbs.db
 # Migreation files
 *api/migrations/
 migrations/
+
+gunicorn.sock
+static/
+logs/
