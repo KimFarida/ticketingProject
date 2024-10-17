@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','102.130.118.149','profitplay9ja.com.ng', 'www.profitplay9ja.com.ng']
 
@@ -89,6 +89,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     'https://profitplay9ja.com.ng',
     'https://www.profitplay9ja.com.ng'
+    'http://localhost:5173'
 ]
 
 ROOT_URLCONF = "ticketing_api.urls"
@@ -166,22 +167,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "defaultdb",
-#         "USER": "avnadmin",
-#         "PASSWORD": "AVNS_3XHg1f3V36xwii5RA0P",
-#         "HOST": "mysql-1723ea0d-farimomoh-ec40.g.aivencloud.com",
-#         "PORT": "21355",
-#         "OPTIONS": {
-#             "ssl": {"ca": ssl.SSLContext(ssl.PROTOCOL_TLS).load_verify_locations(cadata=os.getenv('CADATA')),
-#             },
-#         },
-#     }
-# }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -219,10 +204,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static/' #os.path.join(BASE_DIR, 'static/')
 
-#STATICFILES_DIRS = [
-#    BASE_DIR / 'static',  # Where your collected static files are located
-#]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -230,7 +211,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "api.User"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #"django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -244,3 +225,4 @@ CSRF_TRUSTED_ORIGINS = ['http://102.130.118.149/','http://profitplay9ja.com.ng',
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+#CORS_ORIGIN_ALLOW_ALL = True
