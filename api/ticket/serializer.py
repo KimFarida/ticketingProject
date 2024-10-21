@@ -21,6 +21,7 @@ class CreateTicketTypeSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     # agent field no longer needs a nested serializer, just a direct reference
     agent = serializers.PrimaryKeyRelatedField(read_only=True)
+    ticket_code = serializers.CharField(read_only=True)
 
     class Meta:
         model = Ticket
@@ -60,3 +61,9 @@ class TicketSerializer(serializers.ModelSerializer):
         ticket = Ticket.objects.create(**validated_data)
 
         return ticket
+
+class CreateTicketSerializer(serializers.Serializer):
+    buyer_name = serializers.CharField(max_length=255)
+    buyer_contact = serializers.CharField(max_length=20)
+    ticket_type = serializers.UUIDField()
+    quantity = serializers.IntegerField(min_value=1)

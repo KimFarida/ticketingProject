@@ -1,10 +1,12 @@
+from datetime import datetime, timedelta
+
 from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import CreateTicketTypeSerializer, TicketSerializer
+from .serializer import CreateTicketTypeSerializer, TicketSerializer, CreateTicketSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from decimal import Decimal
@@ -136,7 +138,7 @@ def delete_ticket_type(request, pk):
 # TODO - Correct json body swagger
 @swagger_auto_schema(
     method='POST',
-    request_body=TicketSerializer,
+    request_body=CreateTicketSerializer,
     responses={201: "Success"}
 )
 @api_view(["POST"])
