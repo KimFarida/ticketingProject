@@ -41,15 +41,12 @@ def promote_to_merchant(request, user_id):
         if user.role == 'Merchant':
             return Response({"message":"This user is already a Merchant"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.role = 'Merchant'
-
-        Merchant.objects.create(user=user)
         Agent.objects.filter(user=user).delete()
 
+        user.role = 'Merchant'
         user.save()
 
-        merchant_group = Group.objects.get(name='Merchant')
-        user.groups.add(merchant_group)
+        Merchant.objects.create(user=user)
 
         return Response({"message": f"Agent {user.id} has been promoted to Merchant"},
                         status=status.HTTP_201_CREATED)
