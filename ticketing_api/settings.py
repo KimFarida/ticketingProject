@@ -88,7 +88,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     'https://profitplay9ja.com.ng',
-    'https://www.profitplay9ja.com.ng'
+    'https://www.profitplay9ja.com.ng',
+    'http://localhost:5173',
 ]
 
 ROOT_URLCONF = "ticketing_api.urls"
@@ -244,3 +245,4 @@ CSRF_TRUSTED_ORIGINS = ['http://102.130.118.149/','http://profitplay9ja.com.ng',
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+CORS_ORIGIN_ALLOW_ALL = True
