@@ -113,11 +113,16 @@ def create_voucher(request):
 
 @swagger_auto_schema(
     method='GET',
-    responses={200: CreateVoucherSerializer(many=False)}
+    manual_parameters=[
+        openapi.Parameter('id', openapi.IN_QUERY, description="ID of the voucher", type=openapi.TYPE_STRING),
+        openapi.Parameter('voucher_code', openapi.IN_QUERY, description="Code of the voucher",
+                          type=openapi.TYPE_STRING),
+    ],
+    responses={200: VoucherDetailSerializer()}
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_voucher(request, voucher_):
+def get_voucher(request):
     """
     Retrieve a voucher by its ID or voucher code.
 
@@ -139,7 +144,7 @@ def get_voucher(request, voucher_):
             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
     elif voucher_code:
         try:
-            voucher = Voucher.objects.get(code=voucher_code)
+            voucher = Voucher.objects.get(voucher_code=voucher_code)
         except Voucher.DoesNotExist:
             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
     else:
