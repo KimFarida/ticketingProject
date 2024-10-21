@@ -144,11 +144,11 @@ class PasswordResetSerializer(serializers.Serializer):
 class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['id', 'voucher_balance', 'bonus_balance']
+        fields = '__all__'
 
 class UserDetailsSerializer(serializers.ModelSerializer):
     wallet = WalletSerializer(read_only= True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'phone_number', 'wallet', 'role']
+        fields = '__all__'
