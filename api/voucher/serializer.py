@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from api.models import Voucher, User
 from api.utilities import generate_voucher_code
+from api.account.serializers import UserSerializer
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'role', 'phone_number', 'address']
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'email', 'role', 'phone_number', 'address']
 
 class VoucherListSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
