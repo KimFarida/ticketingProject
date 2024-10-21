@@ -56,7 +56,7 @@ def sold_vouchers(request):
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def issued_vouchers(request):
+def bought_vouchers(request):
     """
     Retrieve all vouchers bought by the authenticated user.
 
