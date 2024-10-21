@@ -25,7 +25,7 @@ processed_param = openapi.Parameter(
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsMerchant | IsAdmin])
-def created_vouchers(request):
+def sold_vouchers(request):
     """
     Retrieve all vouchers sold by the authenticated merchant/admin.
 
@@ -58,10 +58,10 @@ def created_vouchers(request):
 @permission_classes([IsAuthenticated])
 def issued_vouchers(request):
     """
-    Retrieve all vouchers bought by the authenticated userc.
+    Retrieve all vouchers bought by the authenticated user.
 
     Returns:
-    - `200 OK`: A list of vouchers sold by the merchant.
+    - `200 OK`: A list of vouchers bought by the user.
     - `403 Forbidden`: The user is not authorized to access this resource.
     - `401 Unauthorized`: Authentication credentials were not provided.
     """
