@@ -81,7 +81,6 @@ def login(request):
 
 @swagger_auto_schema(
     method='post',
-    request_body=None,
     responses={204: 'Success', 400: 'Bad Request'},
     security=[{"Token": []}],
     manual_parameters=[
