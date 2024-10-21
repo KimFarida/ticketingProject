@@ -178,7 +178,7 @@ def process_voucher(request):
         voucher_code = serializer.validated_data['voucher_code']
 
         try:
-            # Fetch the voucher
+            # Fetch the voucher details
             voucher = Voucher.objects.get(voucher_code=voucher_code)
 
             # Ensure the merchant is the seller of the voucher
