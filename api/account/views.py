@@ -173,7 +173,7 @@ def reset_password_confirm(request):
 
 @swagger_auto_schema(
     method='GET',
-    responses={200: UserDetailsSerializer},
+    response={200: UserDetailsSerializer},
     tags=["User Management"],
 )
 @api_view(['GET'])
@@ -187,18 +187,9 @@ def get_user_details(request):
 
     Returns:
     - `Response`:
-        - On success (200 OK): JSON object containing the user's details, including:
-            - `id`: User's unique identifier.
-            - `username`: User's username.
-            - `first_name`: User's first name.
-            - `last_name`: User's last name.
-            - `email`: User's email address.
-            - `phone_number`: User's phone number.
-            - `wallet`: An object containing wallet details:
-                - `id`: Wallet's unique identifier.
-                - `voucher_balance`: User's current voucher balance.
-                - `bonus_balance`: User's current bonus balance.
-            - `is_superuser`: User is superuser.
+        - On success (200 OK): JSON object serialized using `UserDetailSerializer`, which includes:
+            - User details (see `UserSerializer`).
+            - Wallet details (see `WalletSerializer`).
         - On failure (404 Not Found): Error message indicating that the user was not found.
     """
     try:
