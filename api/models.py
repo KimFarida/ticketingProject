@@ -22,20 +22,24 @@ class User(AbstractUser):
     address = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
+
+        if self.is_superuser and self.role != 'Admin':
+            self.role = 'Admin'
+
         super().save(*args, **kwargs)
 
-        # Automatically assign Agent group on user creation
-        if self.pk and not self.groups.filter(name='Merchants').exists():
-            agent_group, _ = Group.objects.get_or_create(name='Agents')
-            self.groups.add(agent_group)
+        agent_group, _ = Group.objects.get_or_create(name='Agents')
+        merchant_group, _ = Group.objects.get_or_create(name='Merchants')
 
-        # If user role changes to Merchant, update groups
         if self.role == 'Merchant':
-            merchant_group, _ = Group.objects.get_or_create(name='Merchants')
-            agent_group, _ = Group.objects.get_or_create(name='Agents')
-            self.groups.remove(agent_group)
-            self.groups.add(merchant_group)
+            if self.groups.filter(name='Agents').exists():
+                self.groups.remove(agent_group)
+            if not self.groups.filter(name='Merchants').exists():
+                self.groups.add(merchant_group)
 
+        elif self.role == 'Agent':
+            if not self.groups.filter(name='Agents').exists():
+                self.groups.add(agent_group)
 
     class Meta:
         verbose_name = 'User'
