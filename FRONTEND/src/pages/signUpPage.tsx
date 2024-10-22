@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './signUp.css';
-
 import axios from 'axios';
 
 function SignUpPage() {
@@ -18,41 +17,75 @@ function SignUpPage() {
 
     const navigate = useNavigate();
 
-    const navigator = () =>{
-        navigate ('/admin')
-    }
-
-    const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
-
+    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        // Validation checks
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long.');
+            return;
+        }
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            setError('Passwords do not match.');
             return;
         }
 
         const signUpData = {
             first_name: firstName,
             last_name: lastName,
-            email: email,
-            password: password,
-            gender: gender,
-            address: address,
-            phone_number: phoneNumber
+            email,
+            password,
+            gender: gender || null, 
+            address,
+            phone_number: phoneNumber,
         };
 
-        axios.post('http://your-backend-url/api/register/', signUpData)
-            .then(response => {
-                setSuccess('User created successfully!' + response);
+        try {
+            const response = await axios.post(
+                '/api/account/register/',
+                signUpData,
+                {
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`, 
+                    },
+                }
+                );
+            
+            if (response.status === 200 || response.status === 201) {
+                setSuccess('User created successfully!');
                 setError('');
+                setFirstName('');
+                setLastName('');
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+                setGender('');
+                setAddress('');
+                setPhoneNumber('');
+
+                // Authisation header
+                axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
+
+                // Navigate after success
                 setTimeout(() => {
-                    navigate('/merchant');  // Change this to the desired page
-                }, 2000); 
-            })
-            .catch(err => {
-                setError('There was an error signing up.' + err);
-                setSuccess('');
-            });
+                    navigate('/agent');
+                }, 2000);
+            } else {
+                setError('Unexpected response status.');
+            }
+        } catch (err) {
+            
+            if (axios.isAxiosError(err)) {
+                setError('There was an error signing up: ' + (err.response?.data?.message || err.message));
+            } else if (err instanceof Error) {
+                setError('An error occurred: ' + err.message);
+            } else {
+                setError('An unknown error occurred during sign-up.');
+            }
+        }
     };
 
     return (
@@ -69,6 +102,7 @@ function SignUpPage() {
                             type="text"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            maxLength={150}
                             required
                         />
                     </div>
@@ -78,6 +112,7 @@ function SignUpPage() {
                             type="text"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
+                            maxLength={150}
                             required
                         />
                     </div>
@@ -87,6 +122,7 @@ function SignUpPage() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            maxLength={254}
                             required
                         />
                     </div>
@@ -96,6 +132,8 @@ function SignUpPage() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            minLength={8}
+                            maxLength={128}
                             required
                         />
                     </div>
@@ -112,8 +150,8 @@ function SignUpPage() {
                         <label>Gender:</label>
                         <select value={gender} onChange={(e) => setGender(e.target.value)} required>
                             <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
                         </select>
                     </div>
                     <div>
@@ -122,6 +160,7 @@ function SignUpPage() {
                             type="text"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
+                            required
                         />
                     </div>
                     <div>
@@ -130,11 +169,13 @@ function SignUpPage() {
                             type="tel"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
+                            maxLength={128}
+                            required
                         />
                     </div>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {success && <p style={{ color: 'green' }}>{success}</p>}
-                    <button type="submit" onClick={navigator}>Sign Up</button>
+                    <button type="submit">Sign Up</button>
 
                     <p>
                         Already have an account? 

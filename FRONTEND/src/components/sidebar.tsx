@@ -54,9 +54,9 @@ const SidebarComponent: React.FC<SidebarProps> = ({menu}) => {
           onClick={() => setShow(!show)}
         />
         <div className="flex gap-x-4 ml-2 items-center">
-          <h1 className="cursor-pointer  text-xl font-bold text-white duration-500">X</h1>
+          <h1 className="cursor-pointer  text-xl font-bold text-white duration-500">Profit</h1>
           <h1 className={`text-white text-xl font-medium origin-left duration-300 ${!show && 'scale-0'}`}>
-            CASH
+            Play
           </h1>
         </div>
         {/* Menu items */}

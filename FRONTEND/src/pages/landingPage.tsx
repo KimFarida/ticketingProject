@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './signUp.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBars, faTimes} from '@fortawesome/free-solid-svg-icons'
-import petImage from '../images/pet.jpg'
+import petImage from '../images/profit play.png'
 import TextCarousel from '../components/textCarousel';
 import ScrollAnimation from '../components/logoAnimation';
 
@@ -14,7 +14,7 @@ function LandingPage(){
 
     const onToggleMenu = () => {
         console.log('Menu toggled');
-        // Toggle the menu state
+        
         setIsMenuOpen(!isMenuOpen);
     };
 
@@ -23,7 +23,7 @@ function LandingPage(){
             <header className="bg-gray-500">
                 <nav className="flex justify-between items-center w-[92%]  mx-auto">
                     <div>
-                        <h1 className="w-16">X CASH</h1>
+                        <h1 className="w-16 flex">Profit</h1>
                     </div>
                     <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-gray-500 z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
                         <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
@@ -46,17 +46,17 @@ function LandingPage(){
                 {/* HERO SECTION */}
                 <div className="m-20 flex flex-col justify-center items-center text-center px-4 ">
                     <div className="relative z-10 text-white px-4">
-                        {/* Main Heading */}
+                        
                         <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold mb-4 max-w-full overflow-hidden ">
                             Bringing you closer to all the events you love
                         </h1>
 
-                        {/* Subtitle */}
+                       
                         <p className="text-base md:text-lg lg:text-xl mb-8 mt-8 max-w-full overflow-hidden">
                             Find events and make memories that last a lifetime. Your next great experience is just a click away.
                         </p>
 
-                        {/* CTA Button */}
+                        
                         <button className="m-4 bg-orange-500 text-white py-3 px-8 rounded-full hover:bg-orange-600 transition duration-300">
                         Discover events
                         </button>
@@ -67,12 +67,12 @@ function LandingPage(){
             {/* EVENTS SECTION */}
             <div className="m-15 container mx-auto py-10 flex flex-col justify-center items-center text-center px-4">
                 <div className="relative z-10 px-4">
-                    {/* Main Heading */}
+                    
                     <h2 className="text-2xl md:text-3xl lg:text-3xl italic mb-4 max-w-full">
                     There is something here for everyone
                     </h2>
 
-                    {/* Subtitle */}
+                    
                     <h6 className="text-sm text-gray-700 italic md:text-xl lg:text-xl mb-8 mt-8 max-w-full overflow-hidden">
                     Find events and make memories that last a lifetime. Your next great experience is just a click away.
                     </h6>
@@ -86,7 +86,7 @@ function LandingPage(){
                             <p className="text-base md:text-lg lg:text-xl mb-8">
                                 Sell tickets online, promote your event, and  manage your sales all in one place. 
                             </p>
-                            <Link to="/signin">
+                            <Link to="/signup">
                                 <button className="bg-orange-500 text-white py-2 px-4 sm:py-3 sm:px-8 rounded-full hover:bg-orange-600 transition duration-300">
                                 Get started today!
                                 </button>
