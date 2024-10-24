@@ -86,7 +86,7 @@ def list_ticket_types(request):
 )
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def update_ticket_type(request, pk):
+def update_ticket_type(request, id):
     """
     Update a Ticket Type by ID.
 
@@ -98,7 +98,7 @@ def update_ticket_type(request, pk):
     """
 
     try:
-        ticket_type = TicketType.objects.get(pk=pk)
+        ticket_type = TicketType.objects.get(pk=id)
     except TicketType.DoesNotExist:
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -106,7 +106,9 @@ def update_ticket_type(request, pk):
     if serializer.is_valid():
         ticket_type = serializer.save()
         print(ticket_type)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "Successfully updated ticket type.",
+            "updated_fields": serializer.validated_data,
+            "data": serializer.data}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,18 +119,18 @@ def update_ticket_type(request, pk):
 )
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_ticket_type(request, pk):
+def delete_ticket_type(request, id):
     """
     Delete a Ticket Type by ID.
 
-    - `pk`: ID of the ticket type to delete.
+    - `id`: ID of the ticket type to delete.
 
     Returns:
     - On success: No content.
     - On failure: Ticket type not found.
     """
     try:
-        ticket_type = TicketType.objects.get(pk=pk)
+        ticket_type = TicketType.objects.get(pk=id)
         ticket_type.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     except TicketType.DoesNotExist:
