@@ -159,7 +159,7 @@ def process_payout(request, payment_id):
             "user":{
                 "login_id": payout_request.user.login_id,
                 "id": payout_request.user_id,
-                "name": f'{payout_request.user.first_name} {payout_request.request.user.last_name}',
+                "name": f'{payout_request.user.first_name} {payout_request.user.last_name}',
                 "role": payout_request.user.role
             },
             "amount": payout_request.amount,
