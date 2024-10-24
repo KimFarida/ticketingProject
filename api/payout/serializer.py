@@ -5,12 +5,13 @@ from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
 from api.utilities import generate_payment_id
-
+from api.admin.serializer import UserDSerializer
 
 class PayoutRequestSerializer(serializers.ModelSerializer):
+    user = UserDSerializer(read_only=True)
     class Meta:
         model = PayoutRequest
-        fields = ['amount', 'requested_at', 'status', 'payment_id']
+        fields = ['amount', 'requested_at', 'status', 'payment_id', 'user']
 
 class PayoutRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,11 +31,11 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, attrs):
-        now = timezone.now()
-        if now.month == (now + timedelta(days=1)).month:
-            raise serializers.ValidationError("Payout requests can only be made at the end of the month.")
-        return attrs
+    # def validate(self, attrs):
+    #     now = timezone.now()
+    #     if now.month == (now + timedelta(days=1)).month:
+    #         raise serializers.ValidationError("Payout requests can only be made at the end of the month.")
+    #     return attrs
 
     def create(self, validated_data):
         validated_data['payment_id'] = generate_payment_id()
