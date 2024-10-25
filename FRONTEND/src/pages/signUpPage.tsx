@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './signUp.css';
 import axios from 'axios';
+import  api from '../api/axios';
 import AppLogo from '../images/profitplaylogo.png'
 
 function SignUpPage() {
@@ -45,7 +46,7 @@ function SignUpPage() {
         };
 
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 '/api/account/register/',
                 signUpData,
                 {

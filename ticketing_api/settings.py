@@ -91,6 +91,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://profitplay9ja.com.ng',
     'https://www.profitplay9ja.com.ng',
     'http://localhost:5173',
+    'http://localhost:5174',
     'https://ticketing-project-omega.vercel.app',
 ]
 
