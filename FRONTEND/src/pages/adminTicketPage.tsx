@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import SidebarComponent from "../components/sidebar";
 import { faHouse, faShop, faCreditCard, faChartLine, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import  api from '../api/axios';
 
 interface Ticket {
@@ -29,7 +28,7 @@ export function AdminTicketPage() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
             fetchTickets();
         }
         console.log("Tickets state updated:", tickets);
@@ -39,7 +38,7 @@ export function AdminTicketPage() {
         try {
             const token = localStorage.getItem("token");
             if (token) {
-                axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+                api.defaults.headers.common["Authorization"] = `Token ${token}`;
                 const response = await api.get("/api/ticket/ticket-types/list/");
                 setTickets(response.data);
             }
@@ -51,7 +50,7 @@ export function AdminTicketPage() {
     const handleCreateTicketType = async () => {
         try {
             const token = localStorage.getItem("token");
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
 
             console.log("Request data:", {
                 ...formData
@@ -130,14 +129,14 @@ export function AdminTicketPage() {
                     {tickets.map((ticket) => (
                         <div
                             key={ticket.id}
-                            className="bg-[#0c1d55] shadow-md p-4 rounded-md cursor-pointer"
+                            className="bg-[#214F02] text-white shadow-md p-4 rounded-md cursor-pointer"
                         >
                             <h2 className="text-xl font-semibold">{ticket.name}</h2>
                             <p>{ticket.description}</p>
                             <p>Price: {ticket.unit_price}</p>
                             <button
                                 onClick={() => deleteTicket(ticket.id)}
-                                className="bg-blue-500 text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-blue-600 w-full sm:w-auto"
+                                className="bg-[#000000] text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-blue-600 w-full sm:w-auto"
                             >
                                 Delete Ticket Type
                             </button>
@@ -147,7 +146,7 @@ export function AdminTicketPage() {
                 <div className="mt-6">
                     <button
                         onClick={handleClick}
-                        className="bg-blue-600 text-white px-4 py-2 rounded mt-4"
+                        className="bg-[#000000] text-white px-4 py-2 rounded mt-4"
                     >
                         Create new Ticket Type
                     </button>
@@ -155,7 +154,7 @@ export function AdminTicketPage() {
             </div>
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-lg w-1/3">
+                    <div className="bg-[#214F02] text-white p-6 rounded-md shadow-lg w-1/3">
                         <h2 className="text-2xl font-bold mb-4">Create Ticket Type</h2>
                         <form onSubmit={(e) => {
                             e.preventDefault();
@@ -214,10 +213,10 @@ export function AdminTicketPage() {
                                 />
                             </div>
                             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-                            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mt-4">
+                            <button type="submit" className="bg-[#000000] text-white px-4 py-2 rounded mt-4">
                                 Create
                             </button>
-                            <button onClick={() => setShowPopup(false)} className="bg-gray-500 text-white px-4 py-2 rounded mt-4 ml-2">
+                            <button onClick={() => setShowPopup(false)} className="bg-[#000000] text-white px-4 py-2 rounded mt-4 ml-2">
                                 Cancel
                             </button>
                         </form>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './signUp.css';
-import axios from 'axios';
 import  api from '../api/axios';
+import { isAxiosError } from 'axios';
 import AppLogo from '../images/profitplaylogo.png'
 
 function SignUpPage() {
@@ -69,7 +69,7 @@ function SignUpPage() {
                 setPhoneNumber('+234');
 
                 // Authisation header
-                axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
+                api.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
 
                 // Navigate after success
                 setTimeout(() => {
@@ -80,7 +80,7 @@ function SignUpPage() {
             }
         } catch (err) {
             
-            if (axios.isAxiosError(err)) {
+            if (isAxiosError(err)) {
                 setError('There was an error signing up: ' + (err.response?.data?.message || err.message));
             } else if (err instanceof Error) {
                 setError('An error occurred: ' + err.message);

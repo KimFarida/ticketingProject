@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import SidebarComponent from "../components/sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faHouse, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+import api from "../api/axios";
 
 interface Ticket {
     id: string;
@@ -38,16 +38,17 @@ function TicketPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     
     const menuItems = [
-        { id: 1, name: "Dashboard", link: "/agent", icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: "Create Vouchers", link: "/create-voucher", icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: "Profits", link: "/profits", icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 4, name: "Profile", link: "/profile", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 4, name: 'Payout', link: '/payout', icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
     ];
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
             fetchTickets();
             fetchAgentTickets();
         }
@@ -56,8 +57,8 @@ function TicketPage() {
     const fetchTickets = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
-            const response = await axios.get("/api/ticket/ticket-types/list/");
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
+            const response = await api.get("/api/ticket/ticket-types/list/");
             setTickets(response.data);
         }
     };
@@ -66,14 +67,14 @@ function TicketPage() {
         try {
             if (selectedTicket) {
                 const token = localStorage.getItem("token");
-                axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+                api.defaults.headers.common["Authorization"] = `Token ${token}`;
 
                 console.log("Request data:", {
                     ...formData,
                     ticket_type: selectedTicket.id,
                 });
 
-                await axios.post("/api/ticket/create-ticket/", {
+                await api.post("/api/ticket/create-ticket/", {
                     ...formData,
                     ticket_type: selectedTicket.id,
                 });
@@ -102,8 +103,8 @@ function TicketPage() {
         try {
             const token = localStorage.getItem("token");
             if (token) {
-                axios.defaults.headers.common["Authorization"] = `Token ${token}`;
-                const response = await axios.get("/api/ticket/get-agent-tickets/");
+                api.defaults.headers.common["Authorization"] = `Token ${token}`;
+                const response = await api.get("/api/ticket/get-agent-tickets/");
                 setAgentTickets(response.data.tickets);
             }
         } catch (error) {

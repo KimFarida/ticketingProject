@@ -51,7 +51,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({menu}) => {
         {/* Sidebar toggle button */}
         <img 
           src={open}
-          className={`absolute cursor-pointer -right-3 top-9 w-7 border-2 bg-[#0c1d55] border-white rounded-full ${!show && 'rotate-180'}`}
+          className={`absolute cursor-pointer -right-3 top-9 w-7 border-2 bg-[#214F02] border-white rounded-full ${!show && 'rotate-180'}`}
           onClick={() => setShow(!show)}
         />
         <div className="flex gap-x-4 ml-2 items-center">

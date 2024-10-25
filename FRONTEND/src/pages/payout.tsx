@@ -1,6 +1,5 @@
 import { faHouse, faPlus, faChartLine, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import  api from '../api/axios';
 import { useEffect, useState } from "react";
 import SidebarComponent from "../components/sidebar";
@@ -36,7 +35,7 @@ export function Payout() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
             fetchPayoutList();
         }
     }, []);
@@ -93,7 +92,7 @@ export function Payout() {
                     />
                     <button
                         onClick={requestPayout}
-                        className={`bg-blue-500 text-white px-4 py-2 rounded ${loading ? 'opacity-50' : ''}`}
+                        className={`bg-[#000000] text-white px-4 py-2 rounded ${loading ? 'opacity-50' : ''}`}
                         disabled={loading}
                     >
                         {loading ? "Processing..." : "Request Payout"}
