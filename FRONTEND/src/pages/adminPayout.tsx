@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import SidebarComponent from "../components/sidebar";
 import { faChartLine, faCreditCard, faHouse, faShop, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import  api from '../api/axios';
 
 interface PayoutList {
@@ -27,7 +26,7 @@ export function AdminPayout() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+      api.defaults.headers.common["Authorization"] = `Token ${token}`;
       fetchPayoutList();
     }
   }, []);
@@ -84,7 +83,7 @@ export function AdminPayout() {
           {Array.isArray(payoutList) && payoutList.map((payout) => (
             <div
             key={payout.payment_id}
-            className="bg-[#0c1d55] shadow-md p-4 rounded-md flex flex-col space-y-2"
+            className="bg-[#214F02] shadow-md p-4 rounded-md text-white flex flex-col space-y-2"
           >
             <h2 className="text-lg">
               {payout.user.first_name} {payout.user.last_name}
@@ -96,7 +95,7 @@ export function AdminPayout() {
             {payout.status === "pending" && (
               <button
                 onClick={() => processPayment(payout.payment_id)}
-                className="bg-blue-500 text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-blue-600 w-full sm:w-auto"
+                className="bg-[#000000] text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-gray-600 w-full sm:w-auto"
               >
                 Process Payment
               </button>

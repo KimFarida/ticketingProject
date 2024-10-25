@@ -44,7 +44,7 @@ const LogoutButton: React.FC = () => {
             } else if (response.status === 405) {
                 throw new Error("Method not allowed. Please contact support.");
             } else {
-                const errorData = await response.json();
+                const errorData = await response.data;
                 throw new Error(errorData.detail || "Failed to log out. Please try again.");
             }
         } catch (err: any) {

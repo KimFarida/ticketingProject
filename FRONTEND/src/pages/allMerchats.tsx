@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import  api from '../api/axios';
 
 interface User {
@@ -56,7 +55,7 @@ function ViewAllMerchants() {
                         {merchants.map((merchant) => (
                             <div
                                 key={merchant.id}
-                                className="p-6 bg-gray-800 text-white rounded-lg shadow-md"
+                                className="p-6 bg-[#6AE803] text-white rounded-lg shadow-md"
                             >
                                 <h2 className="text-xl font-bold">
                                     {merchant.user.first_name} {merchant.user.last_name}

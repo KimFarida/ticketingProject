@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import  api from '../api/axios';
+import { isAxiosError } from "axios";
 import AppLogo from '../images/profitplaylogo.png'
 
 function SignInPage() {
@@ -46,7 +46,7 @@ function SignInPage() {
         localStorage.setItem("userRole", response.data.user_role);
 
         // Set the default Authorization header for future requests
-        axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+        api.defaults.headers.common["Authorization"] = `Token ${token}`;
 
         // Navigate after a successful login
         const path = response.data.user_role === "Admin" ? "/admin" : "/agent";
@@ -60,7 +60,7 @@ function SignInPage() {
       }
     } catch (err) {
       // Handle Axios errors and other errors
-      if (axios.isAxiosError(err)) {
+      if (isAxiosError(err)) {
         console.error("Axios error response:", err.response?.data);
         setError(
           "There was an error signing in: " +
