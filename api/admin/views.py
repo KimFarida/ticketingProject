@@ -1,3 +1,5 @@
+from rest_framework.permissions import IsAuthenticated
+
 from api.account.permissions import IsAdmin
 from django.contrib.auth.models import Group
 from django.http import HttpResponse
@@ -149,7 +151,7 @@ def list_agents(request):
     }
 )
 @api_view(['GET'])
-@permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated, IsAdmin])
 def ticket_sales_log(request):
     """
     Download daily, weekly, or monthly ticket sales log, categorized by ticket type and agent.
