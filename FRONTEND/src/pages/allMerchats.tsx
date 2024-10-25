@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import  api from '../api/axios';
 
 interface User {
     id: string; 
@@ -24,7 +25,7 @@ function ViewAllMerchants() {
     useEffect(() => {
         const fetchMerchants = async () => {
             try {
-                const response = await axios.get<Merchant[]>("/api/agent/view_all_merchants");
+                const response = await api.get<Merchant[]>("/api/agent/view_all_merchants");
                 if (Array.isArray(response.data)) {
                     setMerchants(response.data);
                 } else {

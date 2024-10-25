@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import  api from '../api/axios';
 
 interface User {
     id: string;
@@ -23,7 +24,7 @@ function ViewAllAgents() {
     const [promoting, setPromoting] = useState<string | null>(null);
 
     useEffect(() => {
-        axios.get<Agent[]>("/api/admin/agents/")
+        api.get<Agent[]>("/api/admin/agents/")
             .then(response => {
                 if (Array.isArray(response.data)) {
                     setAgents(response.data);
@@ -43,7 +44,7 @@ function ViewAllAgents() {
     const promoteToMerchant = async (userId: string) => {
         setPromoting(userId);
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 `/api/admin/promote-to-merchant/${userId}/`
             );
             if (response.status === 200) {

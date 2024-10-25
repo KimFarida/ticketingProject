@@ -3,6 +3,7 @@ import SidebarComponent from "../components/sidebar";
 import { faHouse, faShop, faCreditCard, faChartLine, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import  api from '../api/axios';
 
 interface Ticket {
     id: string;
@@ -39,7 +40,7 @@ export function AdminTicketPage() {
             const token = localStorage.getItem("token");
             if (token) {
                 axios.defaults.headers.common["Authorization"] = `Token ${token}`;
-                const response = await axios.get("/api/ticket/ticket-types/list/");
+                const response = await api.get("/api/ticket/ticket-types/list/");
                 setTickets(response.data);
             }
         } catch (error) {
@@ -56,7 +57,7 @@ export function AdminTicketPage() {
                 ...formData
             });
 
-            await axios.post("/api/ticket/ticket-type/", {
+            await api.post("/api/ticket/ticket-type/", {
                 ...formData,
                 expiration_date: formData.expiration_date
             });
@@ -113,8 +114,8 @@ export function AdminTicketPage() {
         setErrorMessage(null);
         
         try {
-          await axios.delete(`/api/ticket/ticket-type/${id}/delete/`);
-          fetchTickets();
+          await api.delete(`/api/ticket/ticket-type/${id}/delete/`);
+          await fetchTickets();
         } catch (err) {
           console.error(err);
           setErrorMessage("Failed to process the payment. Please try again.");

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import  api from '../api/axios';
 
 const LogoutButton: React.FC = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const LogoutButton: React.FC = () => {
     
         try {
             // Perform the logout request using the fetch API
-            const response = await fetch("/api/account/logout", {
+            const response = await api.post("/api/account/logout", {
                 method: "POST", // Explicitly set POST method
                 headers: {
                     "Accept": "application/json",

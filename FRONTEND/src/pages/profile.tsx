@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import  api from '../api/axios';
 import SidebarComponent from "../components/sidebar";
 import LogoutButton from "./logOut";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,7 +45,7 @@ function ProfilePage() {
             }
 
             try {
-                const response = await axios.get<User>("/api/account/get-user/");
+                const response = await api.get<User>("/api/account/get-user/");
                 setUser(response.data);
             } catch (err) {
                 console.error("Error fetching user details:", err);

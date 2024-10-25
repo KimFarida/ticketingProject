@@ -3,6 +3,7 @@ import SidebarComponent from "../components/sidebar";
 import { faChartLine, faCreditCard, faHouse, faShop, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import  api from '../api/axios';
 
 interface PayoutList {
   amount: string;
@@ -33,7 +34,7 @@ export function AdminPayout() {
 
   const fetchPayoutList = async () => {
     try {
-      const response = await axios.get("/api/payout/list/", {
+      const response = await api.get("/api/payout/list/", {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -52,11 +53,11 @@ export function AdminPayout() {
     setError(null);
     
     try {
-      await axios.put(`/api/payout/process/${payment_Id}`, {
+      await api.put(`/api/payout/process/${payment_Id}`, {
         status: "approved",
       });
       
-      fetchPayoutList();
+      await fetchPayoutList();
     } catch (err) {
       console.error(err);
       setError("Failed to process the payment. Please try again.");
