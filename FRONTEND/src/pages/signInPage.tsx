@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import  api from '../api/axios';
 import AppLogo from '../images/profitplaylogo.png'
 
 function SignInPage() {
@@ -24,7 +25,7 @@ function SignInPage() {
       setError("");
 
       // Make the sign-in request
-      const response = await axios.post(
+      const response = await api.post(
         "/api/account/login/",
         signInData
       );
