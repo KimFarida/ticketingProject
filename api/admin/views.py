@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from api.account.permissions import IsAdmin
 from django.contrib.auth.models import Group
@@ -24,7 +24,7 @@ from django.utils import timezone
 
 )
 @api_view(['POST'])
-# @permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def promote_to_merchant(request, user_id):
     """
     Promote an existing user (Agent) to a Merchant.
@@ -63,7 +63,7 @@ def promote_to_merchant(request, user_id):
     responses={200: MerchantSerializer(many=True)},
 )
 @api_view(['GET'])
-# @permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated])
 def list_merchants(request):
     """
     List all merchants in the system.
@@ -82,7 +82,7 @@ def list_merchants(request):
     responses={200: AgentSerializer(many=True)},
 )
 @api_view(['GET'])
-# @permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def list_agents(request):
     """
     List all agents in the system.
@@ -151,7 +151,7 @@ def list_agents(request):
     }
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def ticket_sales_log(request):
     """
     Download daily, weekly, or monthly ticket sales log, categorized by ticket type and agent.
@@ -164,7 +164,7 @@ def ticket_sales_log(request):
     """
     date_str = request.query_params.get('date')
     period = request.query_params.get('period', 'day')
-    agent_id = request.query_params.get('agent_id')  # New parameter
+    agent_id = request.query_params.get('agent_id')
     output_format = request.query_params.get('format', 'json')
 
     # Default to today's date if no date is provided
