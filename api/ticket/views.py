@@ -415,20 +415,21 @@ def check_ticket_validity(request, ticket_code):
     },
 )
 @api_view(['GET'])
-@permission_classes([IsAgent])
+@permission_classes([IsAgent | IsAdminUser])
 def get_agent_tickets(request):
     """
-    Retrieve tickets associated with the authenticated agent with optional date filtering.
+    Retrieve tickets associated with the authenticated agent or all tickets if the user is an admin,
+    with optional date filtering.
     """
 
-    # Fetch the authenticated agent
-    agent = Agent.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        tickets = Ticket.objects.all()
+    else:
+        agent = Agent.objects.filter(user=request.user)
+        if not agent:
+            return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not agent:
-        return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # Start with all tickets for the agent
-    tickets = Ticket.objects.filter(agent=agent.user)
+        tickets = Ticket.objects.filter(agent=agent)
 
     start_date = request.query_params.get('start_date')
     end_date = request.query_params.get('end_date')
