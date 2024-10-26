@@ -1,7 +1,6 @@
 import SidebarComponent from "../components/sidebar";
 import Card from "../components/card";
 import LineChart from "../components/lineChart";
-import LogoutButton from "./logOut";
 import { faChartLine, faCreditCard, faHouse, faShop} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +14,7 @@ function AdminPage() {
     { id: 2, name: 'Merchant', link: '/view-all-merchants', icon: <FontAwesomeIcon icon={faShop} className="w-7 h-7 object-contain text-gray-300" /> },
     { id: 3, name: 'Transactions', link: '/admin_ticket', icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
     { id: 4, name: 'Payout', link: '/adminPayout', icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
+
   ]
   
 
@@ -62,7 +62,6 @@ function AdminPage() {
             <h2>Daily Transaction Report</h2>
             <LineChart period="month" />
           </div>
-          <LogoutButton/>
         </div>
       </div>
     </>

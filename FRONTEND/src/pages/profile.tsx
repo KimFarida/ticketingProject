@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
 import SidebarComponent from "../components/sidebar";
-import LogoutButton from "./logOut";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
@@ -86,7 +85,6 @@ function ProfilePage() {
                     )
                 )}
             </div>
-            <LogoutButton/>
         </div>
     );
 }
