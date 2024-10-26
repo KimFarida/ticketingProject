@@ -3,7 +3,7 @@ from pyexpat.errors import messages
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -22,7 +22,6 @@ from rest_framework import serializers
     }
 )
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def request_payout(request):
     """
     Request a payout based on the user's bonus balance.
@@ -81,7 +80,6 @@ def request_payout(request):
     },
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def list_payout_requests(request):
     """
     List all payout requests for the authenticated user or for all users if the user is an admin.
@@ -127,7 +125,7 @@ def list_payout_requests(request):
     }
 )
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAdminUser])
 def process_payout(request, payment_id):
     """
     Admin: Approve or reject a payout request.

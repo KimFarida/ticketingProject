@@ -3,7 +3,7 @@ from base64 import urlsafe_b64encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
@@ -16,6 +16,7 @@ from api.models import User
 
 @swagger_auto_schema(method='post', request_body=UserSerializer, responses={200: 'Success'})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     """
     Create a new user with the provided details.
@@ -48,6 +49,7 @@ def register(request):
 
 @swagger_auto_schema(method='post', request_body=UserLoginSerializer, responses={200: 'Success'})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     """
     Authenticate a user with the provided email/login ID and password.
@@ -95,7 +97,6 @@ def login(request):
 )
 
 @api_view(['POST'])
-@permission_classes(IsAuthenticated)
 def logout(request):
     """
     Logout the currently authenticated user.
@@ -115,6 +116,7 @@ def logout(request):
 
 @swagger_auto_schema(method='post', request_body=PasswordResetRequestSerializer, responses={200: 'Success'})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def request_password_reset(request):
     """
     Request a password reset by providing the user's email address.
@@ -152,6 +154,7 @@ def request_password_reset(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @swagger_auto_schema(method='post', request_body=PasswordResetSerializer, responses={200: 'Success'})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def reset_password_confirm(request):
     """
     Confirm password reset by providing a new password along with a token and UID.
@@ -176,7 +179,6 @@ def reset_password_confirm(request):
     tags=["User Management"],
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def get_user_details(request):
     """
     Retrieve detailed information about a user along with their wallet information.
