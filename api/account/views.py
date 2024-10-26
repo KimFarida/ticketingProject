@@ -95,7 +95,7 @@ def login(request):
 )
 
 @api_view(['POST'])
-@permission_classes((IsAuthenticated,))
+@permission_classes(IsAuthenticated)
 def logout(request):
     """
     Logout the currently authenticated user.
