@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
-import LogoutButton from '../pages/logout';
+import LogoutButton from '../pages/logOut';
 
 interface Menus {
   id: number;
