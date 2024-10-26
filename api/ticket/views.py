@@ -422,10 +422,10 @@ def get_agent_tickets(request):
     with optional date filtering.
     """
 
-    if request.user.is_superuser:
+    if request.user.is_staff or request.user.is_superuser:
         tickets = Ticket.objects.all()
     else:
-        agent = Agent.objects.filter(user=request.user)
+        agent = Agent.objects.filter(user=request.user).first()
         if not agent:
             return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
 
