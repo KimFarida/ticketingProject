@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { InternalAxiosRequestConfig } from 'axios';
 
 const api = axios.create({
     baseURL: import.meta.env.PROD
@@ -8,5 +8,19 @@ const api = axios.create({
         'Content-Type': 'application/json'
     }
 });
+
+// Add a request interceptor to include the token in all requests
+api.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+        const token = localStorage.getItem("token");
+        if (token && config.headers) {
+            config.headers.Authorization = `Token ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export default api;
