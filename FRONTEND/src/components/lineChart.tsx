@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import  api from '../api/axios';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -44,7 +45,7 @@ const LineChart: React.FC<LineChartProps> = ({ period }) => {
       setError(null);
 
       try {
-        const response = await axios.get('/api/admin/ticket-sales-log/', {
+        const response = await api.get('/api/admin/ticket-sales-log/', {
           params: { period }
         });
 
