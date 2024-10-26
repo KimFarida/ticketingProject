@@ -10,6 +10,7 @@ export default defineConfig({
                 target: 'https://profitplay9ja.com.ng',
                 changeOrigin: true,
                 secure: false,
+                rewrite: (path) => path.replace(/^\/api/, '/api')
             },
         },
     },
