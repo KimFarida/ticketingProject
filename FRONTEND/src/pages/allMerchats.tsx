@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import  api from '../api/axios';
 
 interface User {
     id: string; 
@@ -24,7 +24,7 @@ function ViewAllMerchants() {
     useEffect(() => {
         const fetchMerchants = async () => {
             try {
-                const response = await axios.get<Merchant[]>("/api/agent/view_all_merchants");
+                const response = await api.get<Merchant[]>("/api/agent/view_all_merchants");
                 if (Array.isArray(response.data)) {
                     setMerchants(response.data);
                 } else {
@@ -55,7 +55,7 @@ function ViewAllMerchants() {
                         {merchants.map((merchant) => (
                             <div
                                 key={merchant.id}
-                                className="p-6 bg-gray-800 text-white rounded-lg shadow-md"
+                                className="p-6 bg-[#6AE803] text-white rounded-lg shadow-md"
                             >
                                 <h2 className="text-xl font-bold">
                                     {merchant.user.first_name} {merchant.user.last_name}

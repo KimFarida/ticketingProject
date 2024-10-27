@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import './signUp.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBars, faTimes} from '@fortawesome/free-solid-svg-icons'
-import petImage from '../images/pet.jpg'
+import petImage from '../images/profit play.png'
+import AppLogo from '../images/profitplaylogo.png'
 import TextCarousel from '../components/textCarousel';
 import ScrollAnimation from '../components/logoAnimation';
 
@@ -14,16 +15,16 @@ function LandingPage(){
 
     const onToggleMenu = () => {
         console.log('Menu toggled');
-        // Toggle the menu state
+        
         setIsMenuOpen(!isMenuOpen);
     };
 
     return(
         <>
-            <header className="bg-gray-500">
+            <header className="bg-[#000000]">
                 <nav className="flex justify-between items-center w-[92%]  mx-auto">
                     <div>
-                        <h1 className="w-16">X CASH</h1>
+                    <img src={AppLogo} alt="App Logo" className="w-24" />
                     </div>
                     <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-gray-500 z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
                         <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
@@ -35,10 +36,10 @@ function LandingPage(){
                         
                     </div>
                     <div className='flex items-center gap-3 py-2'>
-                        <Link to="/signin">
+                        <Link to="/signin" className='border-2 px-2 border-[#6AE803] rounded text-white'>
                             <button>LOG IN</button>
                         </Link>
-                        <button><Link to="/signup" className="bg-[#a6c1ee] text-white px-5 py-2 rounded-full hover:bg-[#87acec]"> Sign Up</Link></button>
+                        <button><Link to="/signup" className="bg-[#6AE803] text-white px-5 py-2 rounded-full hover:bg-[#58D106]"> Sign Up</Link></button>
                         <FontAwesomeIcon icon= {isMenuOpen ? faTimes : faBars} className='text-3xl cursor-pointer md:hidden' onClick={onToggleMenu} />
                     </div>
                 </nav>
@@ -46,19 +47,19 @@ function LandingPage(){
                 {/* HERO SECTION */}
                 <div className="m-20 flex flex-col justify-center items-center text-center px-4 ">
                     <div className="relative z-10 text-white px-4">
-                        {/* Main Heading */}
+                        
                         <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold mb-4 max-w-full overflow-hidden ">
-                            Bringing you closer to all the events you love
+                            Where Luck meets rewards
                         </h1>
 
-                        {/* Subtitle */}
+                       
                         <p className="text-base md:text-lg lg:text-xl mb-8 mt-8 max-w-full overflow-hidden">
-                            Find events and make memories that last a lifetime. Your next great experience is just a click away.
+                           Unlock the reward of luck
                         </p>
 
-                        {/* CTA Button */}
-                        <button className="m-4 bg-orange-500 text-white py-3 px-8 rounded-full hover:bg-orange-600 transition duration-300">
-                        Discover events
+                        
+                        <button className="m-4 bg-[#607714] text-white py-3 px-8 rounded-full transition duration-300">
+                        Get Lucky, Get Reward!
                         </button>
                     </div>    
                 </div>
@@ -67,28 +68,28 @@ function LandingPage(){
             {/* EVENTS SECTION */}
             <div className="m-15 container mx-auto py-10 flex flex-col justify-center items-center text-center px-4">
                 <div className="relative z-10 px-4">
-                    {/* Main Heading */}
+                    
                     <h2 className="text-2xl md:text-3xl lg:text-3xl italic mb-4 max-w-full">
                     There is something here for everyone
                     </h2>
 
-                    {/* Subtitle */}
+                    
                     <h6 className="text-sm text-gray-700 italic md:text-xl lg:text-xl mb-8 mt-8 max-w-full overflow-hidden">
-                    Find events and make memories that last a lifetime. Your next great experience is just a click away.
+                        Play with purpose, win with passion
                     </h6>
 
                     <div className="flex flex-col md:flex-row items-center justify-between m-10">  
                         <div className="md:w-1/2 text-left p-4">
                             <h4 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                            Planning an event? Selling tickets has never been easier
+                            Immerse yourself in exciting gameplay, expertly crafted for ultimate enjoyment.
                             </h4>
 
                             <p className="text-base md:text-lg lg:text-xl mb-8">
-                                Sell tickets online, promote your event, and  manage your sales all in one place. 
+                                Experience thrilling games, expertly designed for maximum reward
                             </p>
-                            <Link to="/signin">
-                                <button className="bg-orange-500 text-white py-2 px-4 sm:py-3 sm:px-8 rounded-full hover:bg-orange-600 transition duration-300">
-                                Get started today!
+                            <Link to="/signup">
+                                <button className="bg-[#607714] text-white py-2 px-4 sm:py-3 sm:px-8 rounded-full hover:bg-orange-600 transition duration-300">
+                                Join the Profit Play family!
                                 </button>
                             </Link>
                             
@@ -107,7 +108,7 @@ function LandingPage(){
             
             <footer className="mt-20 text-gray-700 m-2">
                 <div className="">
-                    <h2>X cash is an event ticketing platform for memorable experiences in Africa</h2>
+                    <h2>Profit Play is an event ticketing platform for memorable experiences in Africa</h2>
                 </div>
                 <div className="md:w-1/2 text-left p-4">
                     <div className="flex justify-content justify-between ml-10 mr-10">

@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faGreaterThan, faLessThan } from '@fortawesome/free-solid-svg-icons';
 
 const texts = [
-    "Working with X Cash has really been great because ticketing and checki-ins have become the easiest parts of our event",
+    "Playing on Profit play has really been great because games and checki-ins have become the easiest parts of betting",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
     "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import  api from '../api/axios';
 import SidebarComponent from "../components/sidebar";
-import LogoutButton from "./logOut";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
@@ -40,11 +39,11 @@ function ProfilePage() {
         const fetchUserDetails = async () => {
             const token = localStorage.getItem("token");
             if (token) {
-                axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+                api.defaults.headers.common["Authorization"] = `Token ${token}`;
             }
 
             try {
-                const response = await axios.get<User>("/api/account/get-user/");
+                const response = await api.get<User>("/api/account/get-user/");
                 setUser(response.data);
             } catch (err) {
                 console.error("Error fetching user details:", err);
@@ -69,7 +68,7 @@ function ProfilePage() {
                     <p className="text-red-500">{error}</p>
                 ) : (
                     user && (
-                        <div className="bg-gray-800 text-white p-6 rounded-lg shadow-md">
+                        <div className="bg-[#214F02] text-white p-6 rounded-lg shadow-md">
                             <h2 className="text-xl font-bold">User Details</h2>
                             <p><strong>Username:</strong> {user.username}</p>
                             <p><strong>First Name:</strong> {user.first_name}</p>
@@ -86,9 +85,9 @@ function ProfilePage() {
                     )
                 )}
             </div>
-            <LogoutButton/>
         </div>
     );
 }
 
 export default ProfilePage;
+

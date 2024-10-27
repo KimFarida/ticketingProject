@@ -10,7 +10,7 @@
 
 /* Form container */
 .form {
-    background-color: #0c1d55;
+    background-color: #58D106;
     padding: 20px 40px;
     border-radius: 10px;
     box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
@@ -48,7 +48,7 @@
 }
 
 .form select {
-    background-color: #0c1d55;
+    background-color: #58D106;
     font-size: 12px;
 }
 
@@ -69,7 +69,7 @@
 
 .form button {
     background-color: #f3f3f3;
-    color:#0c1d55;
+    color:#607714;
     border: none;
     font-weight: bolder;
     padding: 10px 20px;
@@ -92,11 +92,11 @@
 
 .signInLink:hover {
     text-decoration: underline;
-    color: #0c1d55;
+    color: #6AE803;
 }
 
 .signInLink:active {
-    color: #0c1d55;
+    color: #6AE803;
 }
 
 /* Error and success messages */
@@ -113,13 +113,7 @@
     padding: 10px 20px;
 }
 
-.header h1 {
-    font-size: 24px;
-}
 
-.header span {
-    color: #0c1d55;
-}
 
 /* Responsive styles */
 @media (max-width: 480px) {

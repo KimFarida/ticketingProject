@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from .serializer import CreateTicketTypeSerializer, TicketSerializer, CreateTicketSerializer
@@ -15,6 +15,8 @@ from django.db import transaction
 import traceback
 
 import logging
+
+from ..account.permissions import IsAgent
 
 # Create a logger instance
 logger = logging.getLogger(__name__)
@@ -28,7 +30,7 @@ logger = logging.getLogger(__name__)
     }
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def create_ticket_type(request):
     """
     Create a new Ticket Type.
@@ -60,7 +62,6 @@ def create_ticket_type(request):
     responses={200: CreateTicketTypeSerializer(many=True)}
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def list_ticket_types(request):
     """
     List all Ticket Types with optional filtering.
@@ -85,7 +86,7 @@ def list_ticket_types(request):
     responses={200: "Success"}
 )
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def update_ticket_type(request, id):
     """
     Update a Ticket Type by ID.
@@ -118,7 +119,7 @@ def update_ticket_type(request, id):
     responses={204: "No Content"}
 )
 @api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def delete_ticket_type(request, id):
     """
     Delete a Ticket Type by ID.
@@ -137,14 +138,13 @@ def delete_ticket_type(request, id):
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-# TODO - Correct json body swagger
 @swagger_auto_schema(
     method='POST',
     request_body=CreateTicketSerializer,
     responses={201: "Success"}
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAgent])
 def create_tickets(request):
     """
     Create new tickets by an agent.
@@ -315,7 +315,6 @@ def create_tickets(request):
     },
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def check_ticket_validity(request, ticket_code):
     """
     Check if a ticket is valid given its ticket_code.
@@ -416,20 +415,21 @@ def check_ticket_validity(request, ticket_code):
     },
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAgent | IsAdminUser])
 def get_agent_tickets(request):
     """
-    Retrieve tickets associated with the authenticated agent with optional date filtering.
+    Retrieve tickets associated with the authenticated agent or all tickets if the user is an admin,
+    with optional date filtering.
     """
 
-    # Fetch the authenticated agent
-    agent = Agent.objects.filter(user=request.user).first()
+    if request.user.is_staff or request.user.is_superuser:
+        tickets = Ticket.objects.all()
+    else:
+        agent = Agent.objects.filter(user=request.user).first()
+        if not agent:
+            return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not agent:
-        return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # Start with all tickets for the agent
-    tickets = Ticket.objects.filter(agent=agent.user)
+        tickets = Ticket.objects.filter(agent=agent)
 
     start_date = request.query_params.get('start_date')
     end_date = request.query_params.get('end_date')

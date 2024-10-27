@@ -3,11 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from api.models import Merchant, Agent, Wallet
-from .serializer import MerchantBalanceSerializer  #, AgentCreateVoucherSerializer, VoucherDetailSerializer
-from ..account.permissions import IsAgent
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

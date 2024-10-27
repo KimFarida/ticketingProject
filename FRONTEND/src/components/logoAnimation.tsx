@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAppleAlt } from "@fortawesome/free-solid-svg-icons";
+import { faAppleAlt} from "@fortawesome/free-solid-svg-icons";
 import './ScrollAnimation.css'; 
 
 function ScrollAnimation() {
@@ -8,12 +8,13 @@ function ScrollAnimation() {
       <div className="flex space-x-16 scroll-content">
         {/* First set of icons */}
         {[...Array(11)].map((_, index) => (
-          <FontAwesomeIcon key={index} icon={faAppleAlt} className="text-7xl" />
+          <FontAwesomeIcon key={index} icon={faAppleAlt} className="text-7xl text-gray-400" />
         ))}
 
         {/* Duplicated set of icons for seamless scrolling */}
         {[...Array(11)].map((_, index) => (
-          <FontAwesomeIcon key={`duplicate-${index}`} icon={faAppleAlt} className="text-7xl" />
+          <FontAwesomeIcon key={`duplicate-${index}`} icon={faAppleAlt} className="text-7xl text-gray-400" />
+
         ))}
       </div>
     </div>

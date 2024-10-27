@@ -30,11 +30,13 @@ function MerchantPage() {
                         <Card
                         totalAgents={12}
                         title="Total Vouchers sold"
+                        text="Some description or text for the card"
                         onClick={() => console.log('View All clicked')}
                         />
                         <Card
                         totalAgents={20}
                         title="Total Tickets"
+                        text="Additional description or text for this card"
                         onClick={() => console.log('View All clicked')}
                         />
                     </div>

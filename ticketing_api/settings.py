@@ -13,12 +13,16 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import ssl
+
+from django.conf import ENVIRONMENT_VARIABLE
 from dotenv import load_dotenv
 load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ENVIRONMENT = os.getenv('DJANGO_ENV', 'development')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -27,12 +31,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ENVIRONMENT == 'development'
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','102.130.118.149','profitplay9ja.com.ng', 'www.profitplay9ja.com.ng']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if ENVIRONMENT == 'production':
+    ALLOWED_HOSTS.extend(['102.130.118.149', 'profitplay9ja.com.ng', 'www.profitplay9ja.com.ng'])
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -62,18 +68,19 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         #'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+
 }
 
 SWAGGER_SETTINGS = {
    'USE_SESSION_AUTH': False,
    'SECURITY_DEFINITIONS': {
-      # 'Basic': {
-      #       'type': 'basic'
-      # },
       'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
@@ -84,13 +91,41 @@ SWAGGER_SETTINGS = {
 }
 
 
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:5174',
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     'https://profitplay9ja.com.ng',
     'https://www.profitplay9ja.com.ng',
-    'http://localhost:5173',
+    "https://ticketing-project-omega.vercel.app",
 ]
+
+if ENVIRONMENT == 'production':
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        'https://profitplay9ja.com.ng',
+        'https://www.profitplay9ja.com.ng',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'https://ticketing-project-omega.vercel.app',
+    ]
+
+
+else:
+    CORS_ORIGIN_ALLOW_ALL = True
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
+
 
 ROOT_URLCONF = "ticketing_api.urls"
 
@@ -211,18 +246,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "api.User"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if ENVIRONMENT == 'production':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-#EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['http://102.130.118.149/','http://profitplay9ja.com.ng', 'http://www.profitplay9ja.com.ng']
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-CORS_ORIGIN_ALLOW_ALL = True

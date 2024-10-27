@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import  api from '../api/axios';
 
 interface User {
     id: string;
@@ -23,7 +23,7 @@ function ViewAllAgents() {
     const [promoting, setPromoting] = useState<string | null>(null);
 
     useEffect(() => {
-        axios.get<Agent[]>("/api/admin/agents/")
+        api.get<Agent[]>("/api/admin/agents/")
             .then(response => {
                 if (Array.isArray(response.data)) {
                     setAgents(response.data);
@@ -43,7 +43,7 @@ function ViewAllAgents() {
     const promoteToMerchant = async (userId: string) => {
         setPromoting(userId);
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 `/api/admin/promote-to-merchant/${userId}/`
             );
             if (response.status === 200) {
@@ -83,7 +83,7 @@ function ViewAllAgents() {
                         {agents.map((agent) => (
                             <div
                                 key={agent.id}
-                                className="p-6 bg-gray-800 text-white rounded-lg shadow-md"
+                                className="p-6 bg-[#6AE803] text-white rounded-lg shadow-md"
                             >
                                 <h2 className="text-xl font-bold">{agent.user.first_name} {agent.user.last_name}</h2>
                                 <p>Email: {agent.user.email}</p>
@@ -94,7 +94,7 @@ function ViewAllAgents() {
                                 {agent.user.role !== "Merchant" && (
                                     <button
                                         onClick={() => promoteToMerchant(agent.user.id)}
-                                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                                        className="mt-4 px-4 py-2 bg-[#000000] text-white rounded"
                                         disabled={promoting === agent.user.id}
                                     >
                                         {promoting === agent.user.id ? "Promoting..." : "Promote to Merchant"}

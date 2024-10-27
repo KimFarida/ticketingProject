@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
+import { isAxiosError } from "axios";
 import SidebarComponent from "../components/sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faHouse, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -53,12 +54,12 @@ function CreateVoucher() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            api.defaults.headers.common["Authorization"] = `Token ${token}`;
         }
 
         const fetchMerchants = async () => {
             try {
-                const response = await axios.get<Merchant[]>("/api/admin/merchants/");
+                const response = await api.get<Merchant[]>("/api/admin/merchants/");
                 setMerchants(response.data);
             } catch (err) {
                 console.error("Error fetching merchants:", err);
@@ -70,7 +71,7 @@ function CreateVoucher() {
 
         const fetchUserRole = async () => {
             try {
-                const response = await axios.get("/api/account/get-user/", {
+                const response = await api.get("/api/account/get-user/", {
                     headers: {
                         Authorization: `Token ${localStorage.getItem("token")}`,
                     },
@@ -90,7 +91,7 @@ function CreateVoucher() {
         const fetchBoughtVouchers = async () => {
             setVoucherLoading(true);
             try {
-                const response = await axios.get<Voucher[]>("/api/voucher/sold_vouchers/", {
+                const response = await api.get<Voucher[]>("/api/voucher/sold_vouchers/", {
                     headers: {
                         Authorization: `Token ${localStorage.getItem("token")}`,
                     },
@@ -122,7 +123,7 @@ function CreateVoucher() {
             };
             console.log("Creating voucher with data:", voucherData); 
 
-            const response = await axios.post("/api/voucher/create_voucher/", voucherData);
+            const response = await api.post("/api/voucher/create_voucher/", voucherData);
             if (response.status === 201) {
                 alert(`Voucher of $${amount} created successfully for merchant ID: ${selectedMerchantId}`);
                 setSelectedMerchantId(null);
@@ -131,7 +132,7 @@ function CreateVoucher() {
                 alert("Failed to create voucher. Please try again.");
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 console.error("Error creating voucher:", error.response?.data || error.message);
                 alert(`Error: ${error.response?.data?.detail || "An error occurred while creating the voucher."}`);
             } else {
@@ -143,7 +144,7 @@ function CreateVoucher() {
 
     const handleProcessVoucher = async (voucherCode: string) => {
         try {
-            const response = await axios.post("/api/voucher/process_voucher/", {
+            const response = await api.post("/api/voucher/process_voucher/", {
                 voucher_code: voucherCode,
             }, {
                 headers: {
@@ -247,3 +248,4 @@ function CreateVoucher() {
 }
 
 export default CreateVoucher;
+
