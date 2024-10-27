@@ -2,22 +2,15 @@ import SidebarComponent from "../components/sidebar";
 import Card from "../components/card";
 import LineChart from "../components/lineChart";
 import useCounts  from "../hooks/useCounts.ts";
-import { faChartLine, faCreditCard, faHouse, faShop} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
+import { menuAdmin } from "../components/sidebar.tsx"
 
 
 function AdminPage() {
 
   const navigate = useNavigate();
 
-  const menuItems = [
-    { id: 1, name: 'Dashboard', link: '/admin', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 2, name: 'Merchant', link: '/view-all-merchants', icon: <FontAwesomeIcon icon={faShop} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 3, name: 'Tickets', link: '/admin_ticket', icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 4, name: 'Payout', link: '/adminPayout', icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-
-  ]
+  const menuItems = menuAdmin;
   
 
   const handleViewAllAgent = () => {   
@@ -27,6 +20,10 @@ function AdminPage() {
   const handleViewAllMerchant = () => {
     navigate("/view-all-merchants");
   };
+
+  const handleViewAllTicket = () => {
+    navigate("/ticket");
+  }
 
   const apiEndpoints = [
     '/api/admin/agents/',
@@ -71,7 +68,7 @@ function AdminPage() {
             <Card
               totalCount={counts[2] || 0} // Total Tickets count
               title="Total Tickets"
-              onClick={() => console.log('View All clicked')}
+              onClick={handleViewAllTicket}
               text="View All"
             />
           </div>
