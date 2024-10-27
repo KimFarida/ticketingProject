@@ -1,20 +1,14 @@
 import SidebarComponent from "../components/sidebar";
-import { faChartLine,faHouse, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {menuMerchant, menuAgent} from "../components/sidebar";
 import Card from "../components/card";
+
 
 
 function AgentPage() {
     // Get the role from local storage
     const userRole = localStorage.getItem("userRole") || "AGENT";
 
-    const menuItems = [
-        { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 4, name: 'Payout', link: '/payout',icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
-    ];
+    const menuItems = userRole === "Agent" ? menuAgent : menuMerchant;
 
     return (
         <>
