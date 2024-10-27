@@ -61,3 +61,4 @@ migrations/
 
 gunicorn.sock
 static/
+logs/
