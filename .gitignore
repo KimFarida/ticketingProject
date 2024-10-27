@@ -1,4 +1,29 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+FRONTEND/dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .venv/
+# Python
 *.pyc
 __pycache__/
 *.py[cod]
@@ -12,4 +37,27 @@ db.sqlite3-journal
 
 # Environment variables
 ticketing_api/.env
+
+# Virtual environment
+venv/
+env/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+*~
 .env
+# Migreation files
+*api/migrations/
+migrations/
+
+gunicorn.sock
+static/
