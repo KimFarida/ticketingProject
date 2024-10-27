@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
-import SidebarComponent from "../components/sidebar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import SidebarComponent, {menuAgent, menuMerchant} from "../components/sidebar";
 
 
 interface Wallet {
@@ -27,13 +25,9 @@ function ProfilePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    const menuItems = [
-        { id: 1, name: "Dashboard", link: "/agent", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: "Create Vouchers", link: "/create-voucher", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: "Create Tickets", link: "/transactions", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 4, name: "Profits", link: "/profits", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 5, name: "Profile", link: "/profile", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-    ];
+    const userRole = localStorage.getItem("userRole") || "AGENT";
+
+    const menuItems = userRole === "Agent" ? menuAgent : menuMerchant;
 
     useEffect(() => {
         const fetchUserDetails = async () => {

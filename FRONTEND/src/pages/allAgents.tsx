@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
-
 interface User {
     id: string;
     login_id: string;

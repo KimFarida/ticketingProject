@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { isAxiosError } from "axios";
 import SidebarComponent from "../components/sidebar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faHouse, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+import {menuAdmin, menuMerchant, menuAgent} from "../components/sidebar";
 
 interface User {
     id: string;
@@ -44,12 +43,14 @@ function CreateVoucher() {
     const [voucherError, setVoucherError] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
 
-    const menuItems = [
-        { id: 1, name: "Dashboard", link: "/agent", icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: "Create Vouchers", link: "/create-voucher", icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: "Profits", link: "/profits", icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 4, name: "Profile", link: "/profile", icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
-    ];
+    const menuItems = (role)=>{
+        if (role == "Admin")
+            return menuAdmin;
+        else if (role == "Merchant")
+            return menuMerchant;
+        else
+            return menuAgent;
+    }
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -168,7 +169,7 @@ function CreateVoucher() {
 
     return (
         <div className="flex h-screen">
-            <SidebarComponent menu={menuItems} />
+            <SidebarComponent menu={menuItems(role)} />
             <div className="flex-grow p-8">
                 <h1 className="text-2xl mb-4">Create Voucher</h1>
 

@@ -35,6 +35,7 @@ function TicketPage() {
         buyer_contact: "",
         quantity: 1,
     });
+    const [title, setTitle] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     
     const menuItems = [
@@ -47,6 +48,14 @@ function TicketPage() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const role = localStorage.getItem("userRole")
+
+        if (role == 'Admin'){
+            setTitle("All Tickets")
+        }
+        else{
+            setTitle("Agent Tickets")
+        }
         if (token) {
             api.defaults.headers.common["Authorization"] = `Token ${token}`;
             fetchTickets();
@@ -194,7 +203,7 @@ function TicketPage() {
                     </div>
                 )}
                 <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-4">Agent Tickets</h2>
+                    <h2 className="text-2xl font-bold mb-4">{title}</h2>
                     {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
                     <div className="grid grid-cols-3 gap-4">
                         {agentTickets.map((ticket) => (
