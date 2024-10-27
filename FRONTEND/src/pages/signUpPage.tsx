@@ -138,15 +138,11 @@ function SignUpPage() {
             phone_number: fullPhoneNumber,
         };
 
+        localStorage.clear();
         try {
             const response = await api.post(
                 '/api/account/register/',
-                signUpData,
-                {
-                    headers: {
-                        Authorization: `Token ${localStorage.getItem("token")}`,
-                    },
-                }
+                signUpData
             );
 
             if (response.status === 200 || response.status === 201) {
@@ -163,12 +159,9 @@ function SignUpPage() {
                 setPhoneNumber('');
                 setCountryCode('+234');
 
-                // Set authorization header
-                api.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
-
                 // Navigate after success
                 setTimeout(() => {
-                    navigate('/agent');
+                    navigate('/signin');
                 }, 2000);
             } else {
                 setError('Unexpected response status.');
