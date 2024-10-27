@@ -1,5 +1,4 @@
 .venv/
-# Python
 *.pyc
 __pycache__/
 *.py[cod]
@@ -13,28 +12,4 @@ db.sqlite3-journal
 
 # Environment variables
 ticketing_api/.env
-
-# Virtual environment
-venv/
-env/
-
-# IDE specific files
-.vscode/
-.idea/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.swp
-*.swo
-*~
-
-# Migreation files
-*api/migrations/
-migrations/
-
-gunicorn.sock
-static/
-logs/
+.env
