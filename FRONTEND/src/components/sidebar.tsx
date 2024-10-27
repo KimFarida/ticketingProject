@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
 import LogoutButton from '../pages/logOut';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCreditCard, faHouse, faMoneyBill1, faShop, faTicket, faUsers} from "@fortawesome/free-solid-svg-icons";
 
 interface Menus {
   id: number;
@@ -13,6 +15,22 @@ interface Menus {
 interface SidebarProps {
   menu: Menus[];
 }
+
+export const menuAdmin = [
+    { id: 1, name: 'Dashboard', link: '/admin', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 2, name: 'Agent', link: '/view-all-agents', icon: <FontAwesomeIcon icon={faUsers} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 3, name: 'Merchant', link: '/view-all-merchants', icon: <FontAwesomeIcon icon={faShop} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 4, name: 'Ticket', link: '/admin_ticket', icon: <FontAwesomeIcon icon={faTicket} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 5, name: 'Voucher', link: '/create-voucher', icon: <FontAwesomeIcon icon={faMoneyBill1} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 6, name: 'Payout', link: '/adminPayout', icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
+
+  ]
+
+const menuAgent = [
+
+]
+
+const menuMerchnat = []
 
 const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
   const [show, setShow] = useState(true);
