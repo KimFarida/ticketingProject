@@ -429,7 +429,7 @@ def get_agent_tickets(request):
         if not agent:
             return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        tickets = Ticket.objects.filter(user=request.user)
+        tickets = Ticket.objects.filter(agent=request.user)
 
     start_date = request.query_params.get('start_date')
     end_date = request.query_params.get('end_date')
