@@ -28,7 +28,7 @@ const MerchantSelector: React.FC<MerchantSelectorProps> = ({
                 <div
                     key={merchant.id}
                     onClick={() => onSelectMerchant(merchant.user.id)}
-                    className={`p-6 ${selectedMerchantId === merchant.user.id ? "bg-blue-700" : "bg-gray-800"}
+                    className={`p-6 ${selectedMerchantId === merchant.user.id ? "bg-[#214F02]" : "bg-[#214F02]"}
                         text-white rounded-lg shadow-md cursor-pointer`}
                 >
                     <h2 className="text-xl font-bold">

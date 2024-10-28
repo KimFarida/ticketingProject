@@ -57,7 +57,7 @@ const VoucherSearch: React.FC<VoucherSearchProps> = ({ role, onVoucherProcess })
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className={`bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded
+                    className={`bg-[#000000] hover:bg-gray-700 text-white py-2 px-4 rounded
                         ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     {isLoading ? 'Searching...' : 'Search'}

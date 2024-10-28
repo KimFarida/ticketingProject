@@ -18,7 +18,7 @@ const VoucherCreationForm: React.FC<VoucherCreationFormProps> = ({
     if (!selectedMerchantId && role === "Agent" || role === "Admin") return null;
 
     return (
-        <div className="mt-8 p-4 bg-gray-700 text-white rounded-lg">
+        <div className="mt-8 p-4 bg-[#214F05] text-white rounded-lg mb-4">
             <h2 className="text-xl mb-2">Create Voucher</h2>
             <input
                 type="number"
@@ -29,7 +29,7 @@ const VoucherCreationForm: React.FC<VoucherCreationFormProps> = ({
             />
             <button
                 onClick={onCreateVoucher}
-                className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                className="bg-[#000000] hover:bg-blue-700 text-white py-2 px-4 rounded"
             >
                 Create Voucher
             </button>

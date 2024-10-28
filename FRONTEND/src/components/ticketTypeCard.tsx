@@ -16,11 +16,11 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
     onDelete,
     onClick,
 }) => {
-    const isExpired = new Date(ticket.expiration_date) < new Date();
+    const isExpired = new Date(ticket.expiration_date!) < new Date();
 
     return (
         <div
-            className={`bg-[#0c1d55] text-white shadow-md p-4 rounded-md ${
+            className={`bg-[#214F02] text-white shadow-md p-4 rounded-md ${
                 !isAdmin && !isExpired ? 'cursor-pointer' : ''
             }`}
             onClick={() => !isAdmin && !isExpired && onClick?.(ticket)}

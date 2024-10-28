@@ -1,6 +1,7 @@
 import SidebarComponent from "../components/sidebar";
 import {menuMerchant, menuAgent} from "../components/sidebar";
 import Card from "../components/card";
+import useCounts from "@/hooks/useCounts";
 
 
 
@@ -9,6 +10,15 @@ function AgentPage() {
     const userRole = localStorage.getItem("userRole") || "AGENT";
 
     const menuItems = userRole === "Agent" ? menuAgent : menuMerchant;
+
+    const apiEndpoints = [
+        '/api/admin/agents/',
+        '/api/admin/merchants/',
+        '/api/ticket/get-agent-tickets/',
+        '/api/voucher/bought_vouchers/',
+    ];
+
+    const { counts} = useCounts(apiEndpoints);
 
     return (
         <>
@@ -23,13 +33,13 @@ function AgentPage() {
 
                     <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-start items-center md:items-start">
                         <Card
-                            totalAgents={12}
+                            totalCount={counts[1] || 0}
                             title="Total Vouchers sold"
                             onClick={() => console.log('View All clicked')}
                             text="View All"
                         />
                         <Card
-                            totalAgents={20}
+                            totalCount={counts[1] || 0}
                             title="Total Tickets"
                             onClick={() => console.log('View All clicked')}
                             text='View All'

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
-import LogoutButton from '../pages/logOut';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   faChartLine,
@@ -11,13 +10,16 @@ import {
   faPlus,
   faShop,
   faTicket, faUser,
-  faUsers
+  faUsers,
+  faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
+import api from '@/api/axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Menus {
   id: number;
   name: string;
-  link: string;
+  link?: string;
   icon: JSX.Element;
 }
 
@@ -32,13 +34,15 @@ export const menuAdmin = [
     { id: 4, name: 'Ticket', link: '/ticket', icon: <FontAwesomeIcon icon={faTicket} className="w-7 h-7 object-contain text-gray-300" /> },
     { id: 5, name: 'Voucher', link: '/create-voucher', icon: <FontAwesomeIcon icon={faMoneyBill1} className="w-7 h-7 object-contain text-gray-300" /> },
     { id: 6, name: 'Payout', link: '/adminPayout', icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
+    { id: 7, name: 'LogOut', icon: <FontAwesomeIcon icon={faRightFromBracket} className="w-7 h-7 object-contain text-gray-300" /> },
 
   ]
 
 export  const menuMerchant  = [
-        { id: 1, name: 'Dashboard', link: '/dashboard', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
+        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 7, name: 'LogOut',  icon: <FontAwesomeIcon icon={faRightFromBracket} className="w-7 h-7 object-contain text-gray-300" /> },
 
 ]
 
@@ -47,11 +51,13 @@ export const menuAgent = [
         { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 4, name: 'Payout', link: '/payout',icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
+        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 7, name: 'LogOut',  icon: <FontAwesomeIcon icon={faRightFromBracket} className="w-7 h-7 object-contain text-gray-300" /> },
     ];
 
 const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
   const [show, setShow] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -67,6 +73,18 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  
+  const handleLogout = async () => {
+    try {
+        await api.post("/account/logout/"); // Call the logout API
+        localStorage.clear(); // Clear all auth data
+        navigate('/signin', { replace: true }); // Redirect to sign-in
+    } catch (error) {
+        console.error("Logout error:", error);
+        localStorage.clear();
+        navigate('/signin', { replace: true });
+    }
+};
 
   const sidebarClasses = `
     ${show ? 'w-44' : 'w-16'} 
@@ -91,6 +109,8 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
             <li
               key={menuItem.id}
               className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
+              onClick={menuItem.name === 'LogOUT' ? handleLogout : undefined} 
+
             >
               <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
                 <div className="min-w-[40px]">
@@ -102,10 +122,6 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
               </a>
             </li>
           ))}
-          {/* Logout button */}
-          <li className="text-gray-300 text-sm flex items-center gap-x-4 p-6 mt-4">
-            <LogoutButton />
-          </li>
         </ul>
       </div>
     </div>

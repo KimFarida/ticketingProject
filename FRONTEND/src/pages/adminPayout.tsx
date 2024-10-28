@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import SidebarComponent from "../components/sidebar";
-import { faChartLine, faCreditCard, faHouse, faShop, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SidebarComponent, {menuAdmin} from "../components/sidebar";
 import  api from '../api/axios';
 
 interface PayoutList {
@@ -65,13 +63,7 @@ export function AdminPayout() {
     }
   };
 
-  const menuItems = [
-    { id: 1, name: 'Dashboard', link: '/admin', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 2, name: 'Merchant', link: '/view-all-merchants', icon: <FontAwesomeIcon icon={faShop} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 3, name: 'Transactions', link: '/admin_ticket', icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 4, name: 'Payout', link: '/adminPayout', icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-    { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
-  ];
+  const menuItems = menuAdmin
 
   return (
     <div className="flex h-screen">
