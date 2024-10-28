@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
+import {isValidPhoneNumber } from 'libphonenumber-js';
 import './signUp.css';
 import api from '../api/axios';
 import { isAxiosError } from 'axios';

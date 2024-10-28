@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { isAxiosError } from "axios";
 import SidebarComponent from "../components/sidebar";
 import { menuAdmin, menuMerchant, menuAgent } from "../components/sidebar";
+import Modal from "../components/modal";
 
 interface User {
     id: string;
@@ -49,12 +50,19 @@ const CreateVoucher: React.FC = () => {
     const [amount, setAmount] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [role, setRole] = useState<string | null>(null);
+
     const [soldVouchers, setSoldVouchers] = useState<FetchedVoucher[]>([]);
     const [boughtVouchers, setBoughtVouchers] = useState<FetchedVoucher[]>([])
     const [voucherLoading, setVoucherLoading] = useState<boolean>(true);
     const [soldVoucherError, setSoldVoucherError] = useState<string | null>(null);
     const [boughtVoucherError, setBoughtVoucherError] = useState<string | null>(null);
-    const [role, setRole] = useState<string | null>(null);
+
+
+    const [selectedVoucher, setSelectedVoucher] = useState<VoucherDetail | null> (null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(false);
 
     // const [showModal, setShowModal] = useState<boolean>(false);
     // const [createdVoucher, setCreatedVoucher] = useState<FetchedVoucher| null>(null);
@@ -127,6 +135,7 @@ const CreateVoucher: React.FC = () => {
                 setVoucherLoading(false);
             }
         };
+
 
         fetchUserRole();
         fetchMerchants();
@@ -235,6 +244,19 @@ const CreateVoucher: React.FC = () => {
         );
     };
 
+    const handleViewDetails = async (voucherCode:string) => {
+        setIsLoadingDetails(true);
+        try {
+            const response = await api.get(`/api/voucher/get_voucher/?voucher_code=${voucherCode}`);
+            setSelectedVoucher(response.data);
+            setIsModalOpen(true);
+        } catch (err) {
+            console.error("Failed to fetch voucher details:", err);
+        } finally {
+            setIsLoadingDetails(false);
+        }
+    };
+
     const renderSoldVoucherList = () => {
         if (role !== "Merchant" && role !== "Admin") {
             return <p className="mt-8 text-gray-500">You do not have permission to view this section.</p>;
@@ -258,17 +280,54 @@ const CreateVoucher: React.FC = () => {
                                 <p>Name: {voucher.owner.first_name} {voucher.owner.last_name}</p>
                             </div>
                             {!voucher.processed && (
+                                <button
+                                    onClick={() => handleProcessVoucher(voucher.voucher_code)}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-4"
+                                    disabled={false}
+                                >
+                                    Process Voucher
+                                </button>
+                            )}
                             <button
-                                onClick={() => handleProcessVoucher(voucher.voucher_code)}
-                                className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-4"
-                                disabled={false}
+                                onClick={() => handleViewDetails(voucher.voucher_code)}
+                                className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-4 ml-2"
                             >
-                                Process Voucher
+                                {isLoadingDetails ? "Loading..." : "View Details"}
                             </button>
-                        )}
                         </div>
                     ))}
                 </div>
+                {/* Modal for full voucher details */}
+                <Modal isVisible={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                    {selectedVoucher && (
+                        <div>
+                            <h2 className="text-xl font-semibold mb-4">Voucher Details</h2>
+                            <p><strong>Voucher Code:</strong> {selectedVoucher.voucher_code}</p>
+                            <p><strong>Amount:</strong> ${selectedVoucher.amount}</p>
+                            <p><strong>Processed:</strong> {selectedVoucher.processed ? "Yes" : "No"}</p>
+                            <p><strong>Created At:</strong> {new Date(selectedVoucher.created_at).toLocaleString()}</p>
+                            <p><strong>Updated At:</strong> {new Date(selectedVoucher.updated_at).toLocaleString()}</p>
+
+                            <h3 className="font-semibold mt-4">Owner Details</h3>
+                            <p>Name: {selectedVoucher.owner.first_name} {selectedVoucher.owner.last_name}</p>
+                            <p>Email: {selectedVoucher.owner.email}</p>
+                            <p>Phone: {selectedVoucher.owner.phone_number}</p>
+                            <p>Gender: {selectedVoucher.owner.gender}</p>
+
+                            <h3 className="font-semibold mt-4">Seller Details</h3>
+                            {selectedVoucher.seller ? (
+                                <>
+                                    <p>Name: {selectedVoucher.seller.first_name ? `${selectedVoucher.seller.first_name} ${selectedVoucher.owner.last_name}` : "ADMIN"}</p>
+                                    <p>Email: {selectedVoucher.seller.email}</p>
+                                    {selectedVoucher.seller.phone_number && <p>Phone: {selectedVoucher.seller.phone_number}</p>}
+                                    {selectedVoucher.seller.gender && <p>Gender: {selectedVoucher.seller.gender}</p>}
+                                        </>
+                            ) : (
+                                <p>Seller: ADMIN</p>
+                            )}
+                        </div>
+                    )}
+                </Modal>
             </div>
         );
     };
@@ -293,9 +352,46 @@ const CreateVoucher: React.FC = () => {
                             <p>Processed: {voucher.processed ? "Yes" : "No"}</p>
                             <div className="mt-2">
                             </div>
+                            <button
+                                onClick={() => handleViewDetails(voucher.voucher_code)}
+                                className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-4"
+                            >
+                                {isLoadingDetails ? "Loading..." : "View Details"}
+                            </button>
                         </div>
                     ))}
                 </div>
+                 {/* Modal for full voucher details */}
+                <Modal isVisible={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                    {selectedVoucher && (
+                        <div>
+                            <h2 className="text-xl font-semibold mb-4">Voucher Details</h2>
+                            <p><strong>Voucher Code:</strong> {selectedVoucher.voucher_code}</p>
+                            <p><strong>Amount:</strong> ${selectedVoucher.amount}</p>
+                            <p><strong>Processed:</strong> {selectedVoucher.processed ? "Yes" : "No"}</p>
+                            <p><strong>Created At:</strong> {new Date(selectedVoucher.created_at).toLocaleString()}</p>
+                            <p><strong>Updated At:</strong> {new Date(selectedVoucher.updated_at).toLocaleString()}</p>
+
+                            <h3 className="font-semibold mt-4">Owner Details</h3>
+                            <p>Name: {selectedVoucher.owner.first_name} {selectedVoucher.owner.last_name}</p>
+                            <p>Email: {selectedVoucher.owner.email}</p>
+                            <p>Phone: {selectedVoucher.owner.phone_number}</p>
+                            <p>Gender: {selectedVoucher.owner.gender}</p>
+
+                            <h3 className="font-semibold mt-4">Seller Details</h3>
+                            {selectedVoucher.seller ? (
+                                <>
+                                    <p>Name: {selectedVoucher.seller.first_name ? `${selectedVoucher.seller.first_name} ${selectedVoucher.seller.last_name}` : "ADMIN"}</p>
+                                    <p>Email: {selectedVoucher.seller.email}</p>
+                                    {selectedVoucher.seller.phone_number && <p>Phone: {selectedVoucher.seller.phone_number}</p>}
+                                    {selectedVoucher.seller.gender && <p>Gender: {selectedVoucher.seller.gender}</p>}
+                                </>
+                            ) : (
+                                <p>Seller: ADMIN</p>
+                            )}
+                        </div>
+                    )}
+                </Modal>
             </div>
         );
     };
@@ -303,7 +399,7 @@ const CreateVoucher: React.FC = () => {
 
     return (
         <div className="flex h-screen">
-            <SidebarComponent menu={menuItems(role)} />
+            <SidebarComponent menu={menuItems(role)}/>
             <div className="flex-grow p-8">
                 <h1 className="text-2xl mb-4">Create Voucher</h1>
                 {renderMerchantSection()}
