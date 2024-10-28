@@ -60,19 +60,19 @@ function SignInPage() {
         setSuccess("");
       }
     } catch (err) {
-      // Handle Axios errors and other errors
       if (isAxiosError(err)) {
         console.error("Axios error response:", err.response?.data);
         setError(
-          "There was an error signing in: " +
-            (err.response?.data?.message || err.message)
+          // "There was an error signing in: " +
+          //   (err.response?.data?.message || err.message)
+            'Invalid User Login ID/Email or Password',
         );
       } else if (err instanceof Error) {
         setError("There was an error: " + err.message);
       } else {
         setError("An unknown error occurred during sign-in.");
       }
-      setSuccess(""); // Clear any success message in case of an error
+      setSuccess("");
     }
   };
 

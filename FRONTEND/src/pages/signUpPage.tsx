@@ -168,7 +168,14 @@ function SignUpPage() {
             }
         } catch (err) {
             if (isAxiosError(err)) {
-                setError('There was an error signing up: ' + (err.response?.data?.message || err.message));
+                if (err.response?.status === 400) {
+                    // Handle specific 400 error messages
+                    const errorMessage = err.response.data.message || 'Email or Phone Number belongs to a registered User.';
+                    setError(errorMessage);
+                } else {
+                    // For other errors, keep the generic message
+                    setError('There was an error signing up: ' + (err.response?.data?.message || err.message));
+                }
             } else if (err instanceof Error) {
                 setError('An error occurred: ' + err.message);
             } else {
