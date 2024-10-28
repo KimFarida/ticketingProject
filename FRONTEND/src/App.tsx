@@ -5,11 +5,10 @@ import LandingPage from "./pages/landingPage";
 import SignInPage from "./pages/signInPage";
 import AdminPage from "./pages/adminDashboard";
 import AgentPage from "./pages/agentDashboard";
-// import CreateVoucher from "./pages/voucher";
 import ViewAllAgents from "./pages/allAgents";
 import ViewAllMerchants from "./pages/allMerchats";
 import ProfilePage from "./pages/profile";
-import TicketPage from "./pages/ticket";
+import UnifiedTicketPage from "./pages/ticketPage";
 import { AdminTicketPage } from "./pages/adminTicketPage";
 import { AdminPayout } from "./pages/adminPayout";
 import { Payout } from "./pages/payout";
@@ -77,7 +76,7 @@ const App: React.FC = () => {
 
       <Route path="/ticket" element={
         <ProtectedRoute>
-          <TicketPage />
+          <UnifiedTicketPage />
         </ProtectedRoute>
       } />
 
