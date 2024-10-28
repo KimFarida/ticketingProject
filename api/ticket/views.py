@@ -326,28 +326,28 @@ def check_ticket_validity(request, ticket_code):
 
     try:
         ticket = Ticket.objects.get(ticket_code=ticket_code)
+        ticket_info = {
+            "ticket_code": ticket.ticket_code,
+            "buyer_name": ticket.buyer_name,
+            "buyer_contact": ticket.buyer_contact,
+            "ticket_type": {
+                "id": ticket.ticket_type.id,
+                "name": ticket.ticket_type.name,
+                "description": ticket.ticket_type.description,
+            },
+            "agent": {
+                "name": f"{ticket.agent.first_name} {ticket.agent.last_name}",
+                "login_id": ticket.agent.login_id,
+            },
+            "valid_until": ticket.valid_until,
+            "created_at": ticket.created_at,
+            "updated_at": ticket.updated_at,
+        }
 
         if ticket.valid and ticket.valid_until > timezone.now():
-            ticket_info = {
-                "ticket_code": ticket.ticket_code,
-                "buyer_name": ticket.buyer_name,
-                "buyer_contact": ticket.buyer_contact,
-                "ticket_type": {
-                    "id": ticket.ticket_type.id,
-                    "name": ticket.ticket_type.name,
-                    "description": ticket.ticket_type.description,
-                },
-                "agent": {
-                    "name": f"{ticket.agent.first_name} {ticket.agent.last_name}",
-                    "login_id": ticket.agent.login_id,
-                },
-                "valid_until": ticket.valid_until,
-                "created_at": ticket.created_at,
-                "updated_at": ticket.updated_at,
-            }
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
-            return Response({"valid": False, "message": "Ticket is invalid or expired."},
+            return Response({"valid": False, "ticket_info": ticket_info, "message": "Ticket is invalid or expired."},
                             status=status.HTTP_400_BAD_REQUEST)
 
     except Ticket.DoesNotExist:
