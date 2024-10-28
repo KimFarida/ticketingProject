@@ -17,20 +17,26 @@ interface Merchant {
     user: User;
 }
 
+interface UserDetails  extends User {
+    gender: string;
+}
+
 interface FetchedVoucher  {
     id: string;
     voucher_code: string;
     amount: string;
     created_at: string;
     processed: boolean;
-    owner: {
-        first_name: string;
-        last_name: string;
-        email: string;
-        phone_number: string;
-        gender: string;
-    };
+    owner: UserDetails;
+
 }
+interface VoucherDetail extends FetchedVoucher {
+    updated_at: string;
+    seller?: UserDetails;  // Optional, as it may sometimes be "ADMIN" instead of a User object
+}
+
+
+
 
 interface CreatedVoucher extends FetchedVoucher {
     seller: User;
@@ -43,13 +49,15 @@ const CreateVoucher: React.FC = () => {
     const [amount, setAmount] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [vouchers, setVouchers] = useState<FetchedVoucher[]>([]);
+    const [soldVouchers, setSoldVouchers] = useState<FetchedVoucher[]>([]);
+    const [boughtVouchers, setBoughtVouchers] = useState<FetchedVoucher[]>([])
     const [voucherLoading, setVoucherLoading] = useState<boolean>(true);
-    const [voucherError, setVoucherError] = useState<string | null>(null);
+    const [soldVoucherError, setSoldVoucherError] = useState<string | null>(null);
+    const [boughtVoucherError, setBoughtVoucherError] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
 
-    const [showModal, setShowModal] = useState<boolean>(false);
-    const [createdVoucher, setCreatedVoucher] = useState<FetchedVoucher| null>(null);
+    // const [showModal, setShowModal] = useState<boolean>(false);
+    // const [createdVoucher, setCreatedVoucher] = useState<FetchedVoucher| null>(null);
 
     const menuItems = (userRole: string | null) => {
         if (userRole === "Admin")
@@ -98,19 +106,32 @@ const CreateVoucher: React.FC = () => {
             setVoucherLoading(true);
             try {
                 const response = await api.get<FetchedVoucher[]>("/api/voucher/sold_vouchers/");
-                setVouchers(response.data);
+                setSoldVouchers(response.data);
             } catch (err) {
                 console.error("Error fetching vouchers:", err);
-                setVoucherError("Failed to load vouchers.");
+                setSoldVoucherError("Failed to load vouchers.");
             } finally {
                 setVoucherLoading(false);
             }
         };
 
+        const fetchBoughtVouchers = async () => {
+            setVoucherLoading(true); //
+            try {
+                const response = await api.get<FetchedVoucher[]>("/api/voucher/bought_vouchers/");
+                setBoughtVouchers(response.data);
+            } catch (err) {
+                console.error("Error fetching bought vouchers:", err);
+                setBoughtVoucherError("Failed to load bought vouchers."); // Assume you have a state for errors
+            } finally {
+                setVoucherLoading(false);
+            }
+        };
 
         fetchUserRole();
         fetchMerchants();
         fetchSoldVouchers();
+        fetchBoughtVouchers()
     }, [role]);
 
     const handleCreateVoucher = async () => {
@@ -153,7 +174,7 @@ const CreateVoucher: React.FC = () => {
 
             if (response.status === 200) {
                 alert("Voucher processed successfully.");
-                setVouchers(prev => prev.map(voucher =>
+                setSoldVouchers(prev => prev.map(voucher =>
                     voucher.voucher_code === voucherCode ? { ...voucher, processed: true } : voucher
                 ));
             } else {
@@ -214,19 +235,19 @@ const CreateVoucher: React.FC = () => {
         );
     };
 
-    const renderVoucherList = () => {
+    const renderSoldVoucherList = () => {
         if (role !== "Merchant" && role !== "Admin") {
             return <p className="mt-8 text-gray-500">You do not have permission to view this section.</p>;
         }
 
         if (voucherLoading) return <p>Loading vouchers...</p>;
-        if (voucherError) return <p className="text-red-500">{voucherError}</p>;
+        if (soldVoucherError) return <p className="text-red-500">{soldVoucherError}</p>;
 
         return (
             <div className="mt-12">
                 <h1>SOLD VOUCHERS</h1>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {vouchers.map(voucher => (
+                    {soldVouchers.map(voucher => (
                         <div key={voucher.id} className="p-6 bg-gray-800 text-white rounded-lg shadow-md">
                             <h3>Voucher Code: {voucher.voucher_code}</h3>
                             <p>Amount: ${voucher.amount}</p>
@@ -235,23 +256,50 @@ const CreateVoucher: React.FC = () => {
                             <div className="mt-2">
                                 <h4 className="font-semibold">Owner Details:</h4>
                                 <p>Name: {voucher.owner.first_name} {voucher.owner.last_name}</p>
-                                {/*<p>Email: {voucher.owner.email}</p>*/}
-                                {/*<p>Phone: {voucher.owner.phone_number}</p>*/}
-                                {/*<p>Gender: {voucher.owner.gender}</p>*/}
                             </div>
+                            {!voucher.processed && (
                             <button
                                 onClick={() => handleProcessVoucher(voucher.voucher_code)}
                                 className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-4"
-                                disabled={voucher.processed}
+                                disabled={false}
                             >
                                 Process Voucher
                             </button>
+                        )}
                         </div>
                     ))}
                 </div>
             </div>
         );
     };
+
+    const renderBoughtVoucherList = () => {
+        if (role === "Admin") {
+            return <p className="mt-8 text-gray-500">You do not have permission to view this section.</p>;
+        }
+
+        if (voucherLoading) return <p>Loading bought vouchers...</p>;
+        if (boughtVoucherError) return <p className="text-red-500">{boughtVoucherError}</p>;
+
+        return (
+            <div className="mt-12">
+                <h1>BOUGHT VOUCHERS</h1>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {boughtVouchers.map(voucher => (
+                        <div key={voucher.id} className="p-6 bg-gray-800 text-white rounded-lg shadow-md">
+                            <h3>Voucher Code: {voucher.voucher_code}</h3>
+                            <p>Amount: ${voucher.amount}</p>
+                            <p>Created At: {new Date(voucher.created_at).toLocaleString()}</p>
+                            <p>Processed: {voucher.processed ? "Yes" : "No"}</p>
+                            <div className="mt-2">
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
 
     return (
         <div className="flex h-screen">
@@ -260,7 +308,8 @@ const CreateVoucher: React.FC = () => {
                 <h1 className="text-2xl mb-4">Create Voucher</h1>
                 {renderMerchantSection()}
                 {renderVoucherCreation()}
-                {renderVoucherList()}
+                {renderSoldVoucherList()}
+                {renderBoughtVoucherList()}
             </div>
         </div>
     );
