@@ -26,11 +26,16 @@ const LogoutButton: React.FC = () => {
     return (
         <button
             onClick={handleLogout}
-            className={`bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded 
+            className={`text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400 
                 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={loading}
         >
-            {loading ? "Logging out..." : "Logout"}
+            <div className="min-w-[40px]">
+                {/* Replace with an icon if desired */}
+            </div>
+            <span className={`origin-left duration-200`}>
+                {loading ? "Logging out..." : "Logout"}
+            </span>
         </button>
     );
 };

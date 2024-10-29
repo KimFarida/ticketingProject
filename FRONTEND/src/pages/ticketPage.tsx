@@ -155,13 +155,13 @@ function UnifiedTicketPage() {
     const handleEditTicketType = (ticket: TicketType) => {
         setSelectedTicket(ticket);
         setIsEditing(true);
-        const expirationDate = new Date(ticket.expiration_date);
+        const expirationDate = new Date(ticket.expiration_date!);
 
         setTypeFormData({
             name: ticket.name,
-            unit_price: ticket.unit_price,
+            unit_price: ticket.unit_price!,
             description: ticket.description,
-            expiration_date: ticket.expiration_date,
+            expiration_date: ticket.expiration_date!,
             date: expirationDate.toISOString().split('T')[0],
             time: expirationDate.toTimeString().slice(0, 5),
         });
@@ -183,7 +183,7 @@ function UnifiedTicketPage() {
     };
 
     const handleTicketTypeClick = (ticket: TicketType) => {
-        if (!isAdmin && new Date(ticket.expiration_date) > new Date()) {
+        if (!isAdmin && new Date(ticket.expiration_date!) > new Date()) {
             setSelectedTicket(ticket);
             setShowCreateTicketModal(true);
         }
@@ -203,7 +203,7 @@ function UnifiedTicketPage() {
                                 resetTypeFormData();
                                 setShowTicketTypeModal(true);
                             }}
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            className="bg-[#000000] text-white px-4 py-2 rounded"
                         >
                             Create New Ticket Type
                         </button>
@@ -260,7 +260,7 @@ function UnifiedTicketPage() {
                             {agentTickets.map((ticket) => (
                                 <div
                                     key={ticket.ticket_code}
-                                    className="bg-[#0c1d55] text-white shadow-md p-4 rounded-md"
+                                    className="bg-[#214F02] text-white shadow-md p-4 rounded-md"
                                 >
                                     <h3 className="text-xl font-semibold">
                                         Ticket Code: {ticket.ticket_code}

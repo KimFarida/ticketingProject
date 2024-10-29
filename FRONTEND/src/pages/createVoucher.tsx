@@ -99,9 +99,13 @@ const CreateVoucher: React.FC = () => {
         }
 
         try {
+            if (role === "Agent" && !selectedMerchantId) {
+                throw new Error("selectedMerchantId is required for Agents");
+            }
+
             const voucherData = {
                 amount,
-                seller: role === "Agent" ? selectedMerchantId : "151f20d0-da64-4d97-a2e0-b0454011e147",
+                seller: role === "Agent" ? selectedMerchantId! : "151f20d0-da64-4d97-a2e0-b0454011e147",
             };
 
             const response = await voucherApi.createVoucher(voucherData);
@@ -166,7 +170,7 @@ const CreateVoucher: React.FC = () => {
     return (
     <div className="flex h-screen">
         <SidebarComponent menu={menuItems(role)} />
-        <div className="flex-grow p-8">
+        <div className="flex-1 overflow-y-auto p-4">
             <h1 className="text-2xl mb-4">Create Voucher</h1>
             {/* Only show merchant selector for Agent role */}
             {role === "Agent" && (

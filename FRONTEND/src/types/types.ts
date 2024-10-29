@@ -48,6 +48,7 @@ export interface Agent {
 }
 
 export interface Ticket {
+    id: string;
     ticket_code: string;
     buyer_name: string;
     buyer_contact: string;
@@ -87,6 +88,7 @@ export interface TicketInfo {
 }
 
 export interface ValidateTicketInfo {
+    message: string
     valid : boolean,
     ticket_info: TicketInfo
 }

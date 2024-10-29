@@ -131,7 +131,7 @@ function TicketPage() {
                     {tickets.map((ticket) => (
                         <div
                             key={ticket.id}
-                            className="bg-[#0c1d55] shadow-md p-4 rounded-md cursor-pointer"
+                            className="bg-[#214F02] shadow-md p-4 rounded-md cursor-pointer"
                             onClick={() => handleCardClick(ticket)}
                         >
                             <h2 className="text-xl font-semibold">{ticket.name}</h2>
@@ -142,7 +142,7 @@ function TicketPage() {
                 </div>
                 {showPopup && (
                     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-                        <div className="bg-white p-6 rounded-md shadow-lg w-1/3">
+                        <div className="bg-[#58D106] p-6 rounded-md shadow-lg w-1/3">
                             <h2 className="text-2xl font-bold mb-4">Create Ticket for {selectedTicket?.name}</h2>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
@@ -192,7 +192,7 @@ function TicketPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-2 py-2 bg-blue-600 text-white rounded"
+                                        className="px-2 py-2 bg-[#000000] text-white rounded"
                                     >
                                         Create Ticket
                                     </button>
@@ -209,7 +209,7 @@ function TicketPage() {
                         {agentTickets.map((ticket) => (
                             <div
                                 key={ticket.id}
-                                className="bg-[#0c1d55] text-white shadow-md p-4 rounded-md"
+                                className="bg-[#214F02] text-white shadow-md p-4 rounded-md"
                             >
                                 <h3 className="text-xl font-semibold">Ticket Code: {ticket.ticket_code}</h3>
                                 <p>Buyer: {ticket.buyer_name}</p>

@@ -24,7 +24,7 @@ function LandingPage(){
             <header className="bg-[#000000]">
                 <nav className="flex justify-between items-center w-[92%]  mx-auto">
                     <div>
-                    <img src={AppLogo} alt="App Logo" className="w-24" />
+                    <img src={AppLogo} alt="App Logo" className="w-24 " />
                     </div>
                     <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-gray-500 z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
                         <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
@@ -36,11 +36,11 @@ function LandingPage(){
                         
                     </div>
                     <div className='flex items-center gap-3 py-2'>
-                        <Link to="/signin" className='border-2 px-2 border-[#6AE803] rounded text-white'>
+                        <Link to="/signin" className='border-2 px-2 border-[#6AE803] ml-2 rounded text-white whitespace-nowrap'>
                             <button>LOG IN</button>
                         </Link>
-                        <button><Link to="/signup" className="bg-[#6AE803] text-white px-5 py-2 rounded-full hover:bg-[#58D106]"> Sign Up</Link></button>
-                        <FontAwesomeIcon icon= {isMenuOpen ? faTimes : faBars} className='text-3xl cursor-pointer md:hidden' onClick={onToggleMenu} />
+                        <button><Link to="/signup" className="bg-[#6AE803] text-white px-5 py-2 rounded-full hover:bg-[#58D106] whitespace-nowrap"> Sign Up</Link></button>
+                        <FontAwesomeIcon icon= {isMenuOpen ? faTimes : faBars} className='text-3xl text-white cursor-pointer md:hidden' onClick={onToggleMenu} />
                     </div>
                 </nav>
 
@@ -58,7 +58,7 @@ function LandingPage(){
                         </p>
 
                         
-                        <button className="m-4 bg-[#607714] text-white py-3 px-8 rounded-full transition duration-300">
+                        <button className="m-4 bg-[#607714] text-white py-2 px-4 rounded-md md:py-3 md:px-8 md:rounded-full transition duration-300 whitespace-nowrap">
                         Get Lucky, Get Reward!
                         </button>
                     </div>    
