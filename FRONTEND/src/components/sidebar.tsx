@@ -109,7 +109,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
             <li
               key={menuItem.id}
               className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
-              onClick={menuItem.name === 'LogOUT' ? handleLogout : undefined} 
+              onClick={menuItem.name === 'LogOut' ? handleLogout : undefined}
 
             >
               <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
