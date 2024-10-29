@@ -7,10 +7,12 @@ from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from api.models import PayoutRequest
+from api.models import PayoutRequest, User
 from ..account.permissions import IsAdmin
 from django.db import transaction
-from rest_framework import serializers
+from django.core.exceptions import ValidationError
+from django.db import DatabaseError
+
 
 
 @swagger_auto_schema(
@@ -52,7 +54,63 @@ def request_payout(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    method='get',
+    operation_summary="Retrieve Payout Request by ID",
+    operation_description="Fetch a specific payout request by its ID for authenticated users.",
+    manual_parameters=[
+        openapi.Parameter(
+            'payout_id',
+            openapi.IN_PATH,
+            description="ID of the payout request to retrieve.",
+            type=openapi.TYPE_INTEGER,
+        ),
+    ],
+    responses={
+        200: openapi.Response(
+            description="Details of the payout request.",
+            schema=PayoutRequestSerializer(),
+        ),
+        404: openapi.Response(
+            description="Payout request not found."
+        ),
+        400: openapi.Response(
+            description="Invalid input."
+        ),
+        500: openapi.Response(
+            description="A database error occurred."
+        ),
+    },
+)
+@api_view(['GET'])
+def get_payout_by_id(request, payout_id):
+    """
+    Return a payout requests for the authenticated user given the ID.
 
+    **Query Parameters:**
+    - `payout_id` (int, optional): Filter requests by ID.
+
+    **Responses:**
+    - 200: Details on a payout request.
+    """
+    try:
+        payout_request = PayoutRequest.objects.get(id=payout_id)
+        serializer = PayoutRequestSerializer(payout_request)
+    except PayoutRequest.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except DatabaseError:
+        return Response({"error": "A database error occurred while fetching payout requests."},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred.", "details": str(e)},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({
+        "message": "Payout requests retrieved successfully.",
+        "data": serializer.data
+    }, status=status.HTTP_200_OK)
 @swagger_auto_schema(
     method='get',
     operation_summary="List Payout Requests",
@@ -91,30 +149,40 @@ def list_payout_requests(request):
     **Responses:**
     - 200: A list of payout requests.
     """
-
     status_filter = request.query_params.get('status')
     user_id = request.query_params.get('user_id')
+    try:
 
-    if request.user.is_superuser:
-        # If admin, filter by user_id if provided, otherwise return all requests
-        if user_id:
-            payout_requests = PayoutRequest.objects.filter(user__id=user_id)
-        else:
+        if status_filter and status_filter not in ['pending', 'approved', 'rejected']:
+            return Response({'message': "Status must be 'approved', 'pending', or 'rejected'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if request.user.is_superuser:
+            # Admin: filter by user_id and/or status if provided
             payout_requests = PayoutRequest.objects.all()
-    else:
-        payout_requests = PayoutRequest.objects.filter(user=request.user)
+            if user_id:
+                payout_requests = payout_requests.filter(user_id=user_id)
+            if status_filter:
+                payout_requests = payout_requests.filter(status=status_filter)
+        else:
+            payout_requests = PayoutRequest.objects.filter(user=request.user)
+            if status_filter:
+                payout_requests = payout_requests.filter(status=status_filter)
 
-    if status_filter:
-        payout_requests = payout_requests.filter(status=status_filter)
+        serializer = PayoutRequestSerializer(payout_requests, many=True)
+    except DatabaseError:
+        return Response({"error": "A database error occurred while fetching payout requests."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    serializer = PayoutRequestSerializer(payout_requests, many=True)
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred.", "details": str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
         "message": "Payout requests retrieved successfully.",
         "data": serializer.data
     }, status=status.HTTP_200_OK)
-
-
-
 @swagger_auto_schema(
     method='PUT',
     request_body=PayoutRequestStatusSerializer,
