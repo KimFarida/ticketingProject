@@ -22,6 +22,7 @@ const useCounts = (apiEndpoints: string[]) => {
               return arrayKey ? data[arrayKey].length : 0;
           } else {
               return 0; // Fallback if neither an array nor object with array was found
+
           }
         });
         setCounts(newCounts);
