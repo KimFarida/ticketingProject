@@ -71,8 +71,8 @@ function ProfilePage() {
                             <p><strong>Phone Number:</strong> {user.phone_number}</p>
                             <div className="mt-4">
                                 <h3 className="text-lg font-semibold">Wallet Details</h3>
-                                <p><strong>Voucher Balance:</strong> ${user.wallet.voucher_balance!}</p>
-                                <p><strong>Bonus Balance:</strong> ${user.wallet.bonus_balance!}</p>
+                                <p><strong>Voucher Balance:</strong> &#8358;{user.wallet.voucher_balance!}</p>
+                                <p><strong>Bonus Balance:</strong> &#8358;{user.wallet.bonus_balance!}</p>
                             </div>
                             <p><strong>Role:</strong> {user.role}</p>
                         </div>
