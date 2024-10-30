@@ -58,14 +58,6 @@ def request_payout(request):
     method='get',
     operation_summary="Retrieve Payout Request by ID",
     operation_description="Fetch a specific payout request by its ID for authenticated users.",
-    manual_parameters=[
-        openapi.Parameter(
-            'payout_id',
-            openapi.IN_PATH,
-            description="ID of the payout request to retrieve.",
-            type=openapi.TYPE_INTEGER,
-        ),
-    ],
     responses={
         200: openapi.Response(
             description="Details of the payout request.",
@@ -88,13 +80,13 @@ def get_payout_by_id(request, payout_id):
     Return a payout requests for the authenticated user given the ID.
 
     **Query Parameters:**
-    - `payout_id` (int, optional): Filter requests by ID.
+    - `payout_id` (str, optional): Filter requests by ID.
 
     **Responses:**
     - 200: Details on a payout request.
     """
     try:
-        payout_request = PayoutRequest.objects.get(id=payout_id)
+        payout_request = PayoutRequest.objects.get(payment_id=payout_id)
         serializer = PayoutRequestSerializer(payout_request)
     except PayoutRequest.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
