@@ -130,3 +130,17 @@ export interface PayoutResponse {
     data: PayoutDetails;
 }
 
+export interface PayoutList {
+  amount: string;
+  requested_at: string;
+  status: string;
+  payment_id: string;
+  user: {
+    role: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+  };
+}
+
