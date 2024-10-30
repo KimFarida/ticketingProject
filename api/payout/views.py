@@ -1,5 +1,3 @@
-from pyexpat.errors import messages
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,8 +5,7 @@ from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from api.models import PayoutRequest, User
-from ..account.permissions import IsAdmin
+from api.models import PayoutRequest
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError
@@ -197,7 +194,7 @@ def process_payout(request, payment_id):
         return Response({"error": "Payout request not found."}, status=status.HTTP_404_NOT_FOUND)
 
     status_value = request.data.get('status')
-    if status_value not in ['approved', 'rejected']:
+    if status_value not in ['approved', 'rejected','pending']:
         return Response({"error": "Invalid status. Use 'approved' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
 
     with transaction.atomic():
