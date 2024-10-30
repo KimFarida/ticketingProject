@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import SidebarComponent, {menuAdmin} from "../components/sidebar";
 import  api from '../api/axios';
+import PayoutSearch from "@/components/payoutSearch";
 
 interface PayoutList {
   amount: string;
@@ -68,33 +69,45 @@ export function AdminPayout() {
   return (
     <div className="flex h-screen">
       <SidebarComponent menu={menuItems} />
-      <div className="flex-1 p-4">
-        {loading && <p>Processing payment...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {Array.isArray(payoutList) && payoutList.map((payout) => (
-            <div
-            key={payout.payment_id}
-            className="bg-[#214F02] shadow-md p-4 rounded-md text-white flex flex-col space-y-2"
-          >
-            <h2 className="text-lg">
-              {payout.user.first_name} {payout.user.last_name}
-            </h2>
-            <p className="text-sm">{payout.user.email}</p>
-            <p className="text-sm ">{payout.user.phone_number}</p>
-            <p className="text-sm">Amount: {payout.amount}</p>
-            <p className="text-sm">Status: {payout.status}</p>
-            {payout.status === "pending" && (
-              <button
-                onClick={() => processPayment(payout.payment_id)}
-                className="bg-[#000000] text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-gray-600 w-full sm:w-auto"
-              >
-                Process Payment
-              </button>
-            )}
-          </div>          
-          ))}
-        </div>
+      <div className="flex-1 p-4 space-y-6">
+        {/* Header */}
+        <h1 className="text-2xl font-bold mb-4">Payout Management</h1>
+
+        {/* Payout Search Section */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Search Payout</h2>
+          <PayoutSearch />
+          {loading && <p>Processing payment...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+        </section>
+
+        {/* Payout List Section */}
+        <section>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {Array.isArray(payoutList) && payoutList.map((payout) => (
+              <div
+              key={payout.payment_id}
+              className="bg-[#214F02] shadow-md p-4 rounded-md text-white flex flex-col space-y-2"
+            >
+              <h2 className="text-lg">
+                {payout.user.first_name} {payout.user.last_name}
+              </h2>
+              <p className="text-sm">{payout.user.email}</p>
+              <p className="text-sm ">{payout.user.phone_number}</p>
+              <p className="text-sm">Amount: {payout.amount}</p>
+              <p className="text-sm">Status: {payout.status}</p>
+              {payout.status === "pending" && (
+                <button
+                  onClick={() => processPayment(payout.payment_id)}
+                  className="bg-[#000000] text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-gray-600 w-full sm:w-auto"
+                >
+                  Process Payment
+                </button>
+              )}
+            </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );
