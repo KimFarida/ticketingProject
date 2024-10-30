@@ -113,20 +113,19 @@ function LandingPage(){
                 <div className="">
                     <h2>Profit Play is an event ticketing platform for memorable experiences in Africa</h2>
                 </div>
-                <div className="md:w-1/2 text-left p-4">
-                    <div className="flex justify-content justify-between ml-10 mr-10">
-
+                <div className=" w-full flex justify-center">
+                    <div className="w-full md:w-3/4 lg:w-2/3  text-left p-4 flex justify-between">
                         <div>
                             <p>Company</p>
-                            <ul className="text-sm italic">
+                            <ul className="text-sm italic grid grid-cols-2 gap-2">
                                 <li>About Us</li>
-                                <li>How  it works</li>
+                                <li>How it works</li>
                                 <li>Blog</li>
                             </ul>
                         </div>
                         <div>
                             <p>Follow Us</p>
-                            <ul  className="text-sm italic">
+                            <ul className="text-sm italic grid grid-cols-2 gap-2">
                                 <li>Facebook</li>
                                 <li>X(Twitter)</li>
                                 <li>Instagram</li>
@@ -135,6 +134,7 @@ function LandingPage(){
                         </div>
                     </div>
                 </div>
+
             </footer>
             
         </>
