@@ -80,7 +80,7 @@ def get_payout_by_id(request, payout_id):
     Return a payout requests for the authenticated user given the ID.
 
     **Query Parameters:**
-    - `payout_id` (int, optional): Filter requests by ID.
+    - `payout_id` (str, optional): Filter requests by ID.
 
     **Responses:**
     - 200: Details on a payout request.
