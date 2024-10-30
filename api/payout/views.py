@@ -86,7 +86,7 @@ def get_payout_by_id(request, payout_id):
     - 200: Details on a payout request.
     """
     try:
-        payout_request = PayoutRequest.objects.get(id=payout_id)
+        payout_request = PayoutRequest.objects.get(payment_id=payout_id)
         serializer = PayoutRequestSerializer(payout_request)
     except PayoutRequest.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
