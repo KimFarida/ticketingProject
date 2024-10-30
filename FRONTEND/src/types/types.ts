@@ -4,6 +4,8 @@ export interface User {
     last_name: string;
     email: string;
     phone_number: string;
+    role?: string;
+    login_id: string;
 }
 
 export interface Merchant {
@@ -114,3 +116,17 @@ export interface TicketCreationModalProps {
   onClose: () => void;
   ticketData: TicketCreationResponse | null;
 }
+
+export interface PayoutDetails{
+    amount: string;
+    requested_at: string;
+    status:string;
+    payment_id:string;
+    user: User;
+
+}
+export interface PayoutResponse {
+    message: string;
+    data: PayoutDetails;
+}
+
