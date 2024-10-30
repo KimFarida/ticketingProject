@@ -3,7 +3,6 @@ import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-  faChartLine,
   faCreditCard,
   faHouse,
   faMoneyBill1,
