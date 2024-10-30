@@ -58,14 +58,6 @@ def request_payout(request):
     method='get',
     operation_summary="Retrieve Payout Request by ID",
     operation_description="Fetch a specific payout request by its ID for authenticated users.",
-    manual_parameters=[
-        openapi.Parameter(
-            'payout_id',
-            openapi.IN_PATH,
-            description="ID of the payout request to retrieve.",
-            type=openapi.TYPE_INTEGER,
-        ),
-    ],
     responses={
         200: openapi.Response(
             description="Details of the payout request.",
