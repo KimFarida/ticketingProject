@@ -100,7 +100,7 @@ def get_payout_by_id(request, payout_id):
         return Response({"error": "An unexpected error occurred.", "details": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
-        "message": "Payout requests retrieved successfully.",
+        "message": "Payout request retrieved successfully.",
         "data": serializer.data
     }, status=status.HTTP_200_OK)
 @swagger_auto_schema(
