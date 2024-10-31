@@ -3,14 +3,16 @@ import SidebarComponent, {menuAdmin} from "../components/sidebar";
 import api from '../api/axios';
 import {PayoutList} from "@/types/types.ts";
 import PayoutSearch from "@/components/payoutSearch";
-import StatusToggle from "@/components/statusToggle.tsx";
-
+import StatusToggle from "@/components/statusToggle";
+import PayOutDetailsModal from "@/components/payoutDetailsModal";
 
 export function AdminPayout() {
   const [payoutList, setPayoutList] = useState<PayoutList[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string>("approved");
+  const [selectedStatus, setSelectedStatus] = useState<string>("pending");
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedPayout, setSelectedPayout] = useState<PayoutList | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,7 +22,7 @@ export function AdminPayout() {
     }
   }, [selectedStatus]);
 
-  const fetchPayoutList = async (status:string) => {
+  const fetchPayoutList = async (status: string) => {
     try {
       const response = await api.get(`/api/payout/list/?status=${status}`, {
         headers: {
@@ -36,16 +38,12 @@ export function AdminPayout() {
     }
   };
 
-
-  const processPayment = async (payment_Id: string) => {
+  const processPayment = async (payment_Id: string, status: string = "approved") => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      await api.put(`/api/payout/process/${payment_Id}`, {
-        status: "approved",
-      });
-      
+      await api.put(`/api/payout/process/${payment_Id}`, {status});
       await fetchPayoutList(selectedStatus);
     } catch (err) {
       console.error(err);
@@ -55,14 +53,22 @@ export function AdminPayout() {
     }
   };
 
+  const handleViewDetails = (payout: PayoutList) => {
+    setSelectedPayout(payout);
+    setIsModalVisible(true);
+  };
+
+  const handleProcessInModal = async (paymentId: string, newStatus: string) => {
+    await processPayment(paymentId, newStatus);
+    setIsModalVisible(false);
+  };
+
   return (
     <div className="flex h-screen">
       <SidebarComponent menu={menuAdmin} />
       <div className="flex-1 p-4 space-y-6">
-        {/* Header */}
         <h1 className="text-2xl font-bold mb-4">Payout Management</h1>
 
-        {/* Payout Search Section */}
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Search Payout</h2>
           <PayoutSearch />
@@ -70,14 +76,12 @@ export function AdminPayout() {
           {error && <p className="text-red-500">{error}</p>}
         </section>
 
-        {/* Payout List Section */}
         <section>
           <h2 className="text-xl font-semibold mb-4">Payout List</h2>
-          {/* Status Toggle*/}
-          <StatusToggle selectedStatus={selectedStatus} onStatusChange={setSelectedStatus}/>
-            {Array.isArray(payoutList) && payoutList.length === 0 ? (
-                <p>No {selectedStatus} requests available.</p>
-            ) : (
+          <StatusToggle selectedStatus={selectedStatus} onStatusChange={setSelectedStatus} />
+          {Array.isArray(payoutList) && payoutList.length === 0 ? (
+            <p>No {selectedStatus} requests available.</p>
+          ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {payoutList.map((payout) => (
                 <div
@@ -88,7 +92,7 @@ export function AdminPayout() {
                     {payout.user.first_name} {payout.user.last_name}
                   </h2>
                   <p className="text-sm">{payout.user.email}</p>
-                  <p className="text-sm ">{payout.user.phone_number}</p>
+                  <p className="text-sm">{payout.user.phone_number}</p>
                   <p className="text-sm">Amount: {payout.amount}</p>
                   <p className="text-sm">Status: {payout.status}</p>
                   {payout.status === "pending" && (
@@ -99,13 +103,28 @@ export function AdminPayout() {
                       Process Payment
                     </button>
                   )}
+                  <button
+                    onClick={() => handleViewDetails(payout)}
+                    className="bg-blue-500 text-white text-sm px-2 py-1 rounded-md mt-2 hover:bg-blue-600 w-full sm:w-auto"
+                  >
+                    View Details
+                  </button>
                 </div>
               ))}
             </div>
           )}
         </section>
+
+        {selectedPayout && (
+          <PayOutDetailsModal
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            payoutRequest={selectedPayout}
+            onProcess={handleProcessInModal}
+            showProcessButton
+          />
+        )}
       </div>
     </div>
   );
 }
-
