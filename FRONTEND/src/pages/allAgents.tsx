@@ -41,28 +41,30 @@ function ViewAllAgents() {
 
     const promoteToMerchant = async (userId: string) => {
         setPromoting(userId);
+
         try {
-            const response = await api.post(
-                `/api/admin/promote-to-merchant/${userId}/`
-            );
-            if (response.status === 200) {
-                setAgents((prevAgents) =>
-                    prevAgents.map((agent) =>
-                        agent.user.id === userId
-                            ? { ...agent, user: { ...agent.user, role: "Merchant" } }
-                            : agent
-                    )
-                );
-                if (userId === localStorage.getItem("currentUserId")) {
-                    localStorage.setItem("userRole", "Merchant");
-                }
-                alert("Agent promoted to Merchant successfully.");
-            } else {
-                alert("Failed to promote agent. Please try again.");
+            const response = await api.post(`/api/admin/promote-to-merchant/${userId}/`);
+            if (response.status !== 201) {
+                new Error("Failed to promote agent. Please try again.");
             }
+
+            // Update agent list and local storage if promotion succeeds
+            setAgents((prevAgents) =>
+                prevAgents.map((agent) =>
+                    agent.user.id === userId
+                        ? { ...agent, user: { ...agent.user, role: "Merchant" } }
+                        : agent
+                )
+            );
+
+            if (userId === localStorage.getItem("currentUserId")) {
+                localStorage.setItem("userRole", "Merchant");
+            }
+
+            alert("Agent promoted to Merchant successfully.");
         } catch (error) {
             console.error("Error promoting agent:", error);
-            alert("An error occurred while promoting the agent.");
+            alert(error instanceof Error ? error.message : "An unexpected error occurred.");
         } finally {
             setPromoting(null);
         }
