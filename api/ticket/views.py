@@ -339,6 +339,8 @@ def check_ticket_validity(request, ticket_code):
 
     try:
         ticket = Ticket.objects.get(ticket_code=ticket_code)
+        if ticket.ticket_type is None:
+            return Response({"error": "Ticket type deleted"}, status=status.HTTP_410_GONE)
         ticket_info = {
             "ticket_code": ticket.ticket_code,
             "buyer_name": ticket.buyer_name,
