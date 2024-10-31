@@ -207,7 +207,7 @@ def process_voucher(request):
                 buyer = voucher.owner
                 buyer_wallet = Wallet.objects.get(user=voucher.owner)
 
-                bonus_percentage = Decimal('0.10') if buyer.role == "Agent" else Decimal('0.20')
+                bonus_percentage = Decimal('0.20') if buyer.role == "Agent" else Decimal('0.00')
                 buyer_wallet.voucher_balance += voucher.amount
                 buyer_wallet.bonus_balance += voucher.amount * bonus_percentage
                 buyer_wallet.save()
