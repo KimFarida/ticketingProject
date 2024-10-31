@@ -39,16 +39,17 @@ export const menuAdmin = [
 
 export  const menuMerchant  = [
         { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faMoneyBill1} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 4, name: 'Payout', link: '/payout',icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 7, name: 'LogOut',  icon: <FontAwesomeIcon icon={faRightFromBracket} className="w-7 h-7 object-contain text-gray-300" /> },
 
 ]
 
 export const menuAgent = [
         { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faMoneyBill1} className="w-7 h-7 object-contain text-gray-300" /> },
+        { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faTicket} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 4, name: 'Payout', link: '/payout',icon: <FontAwesomeIcon icon={faCreditCard} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> },
         { id: 7, name: 'LogOut',  icon: <FontAwesomeIcon icon={faRightFromBracket} className="w-7 h-7 object-contain text-gray-300" /> },
