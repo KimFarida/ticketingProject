@@ -351,7 +351,7 @@ def check_ticket_validity(request, ticket_code):
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
             return Response({"valid": False, "ticket_info": ticket_info, "message": "Ticket is invalid or expired."},
-                            status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_200_OK)
 
     except Ticket.DoesNotExist:
         return Response({"error": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
