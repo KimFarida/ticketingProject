@@ -141,8 +141,12 @@ def delete_ticket_type(request, id):
     """
     try:
         ticket_type = TicketType.objects.get(pk=id)
-        ticket_type.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        with transaction.atomic():
+            #Invalidate Every Ticket Created Using This Type and set the Ticket Type to Null
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False, ticket_type=None)
+            ticket_type.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
     except TicketType.DoesNotExist:
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
