@@ -1,5 +1,3 @@
-from pyexpat.errors import messages
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,8 +5,7 @@ from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from api.models import PayoutRequest, User
-from ..account.permissions import IsAdmin
+from api.models import PayoutRequest
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError
@@ -58,14 +55,6 @@ def request_payout(request):
     method='get',
     operation_summary="Retrieve Payout Request by ID",
     operation_description="Fetch a specific payout request by its ID for authenticated users.",
-    manual_parameters=[
-        openapi.Parameter(
-            'payout_id',
-            openapi.IN_PATH,
-            description="ID of the payout request to retrieve.",
-            type=openapi.TYPE_INTEGER,
-        ),
-    ],
     responses={
         200: openapi.Response(
             description="Details of the payout request.",
@@ -88,13 +77,13 @@ def get_payout_by_id(request, payout_id):
     Return a payout requests for the authenticated user given the ID.
 
     **Query Parameters:**
-    - `payout_id` (int, optional): Filter requests by ID.
+    - `payout_id` (str, optional): Filter requests by ID.
 
     **Responses:**
     - 200: Details on a payout request.
     """
     try:
-        payout_request = PayoutRequest.objects.get(id=payout_id)
+        payout_request = PayoutRequest.objects.get(payment_id=payout_id)
         serializer = PayoutRequestSerializer(payout_request)
     except PayoutRequest.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -108,7 +97,7 @@ def get_payout_by_id(request, payout_id):
         return Response({"error": "An unexpected error occurred.", "details": str(e)},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
-        "message": "Payout requests retrieved successfully.",
+        "message": "Payout request retrieved successfully.",
         "data": serializer.data
     }, status=status.HTTP_200_OK)
 @swagger_auto_schema(
@@ -205,8 +194,8 @@ def process_payout(request, payment_id):
         return Response({"error": "Payout request not found."}, status=status.HTTP_404_NOT_FOUND)
 
     status_value = request.data.get('status')
-    if status_value not in ['approved', 'rejected']:
-        return Response({"error": "Invalid status. Use 'approved' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
+    if status_value not in ['approved', 'rejected','pending']:
+        return Response({"error": "Invalid status. Use 'approved' ,'pending' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
 
     with transaction.atomic():
         if status_value == 'approved':

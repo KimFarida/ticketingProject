@@ -106,7 +106,10 @@ def update_ticket_type(request, id):
     serializer = CreateTicketTypeSerializer(ticket_type, data=request.data, partial=True)
     if serializer.is_valid():
         ticket_type = serializer.save()
-        print(ticket_type)
+
+        # Update the `valid_until` field of all tickets with this TicketType
+        Ticket.objects.filter(ticket_type=ticket_type).update(valid_until=ticket_type.expiration_date)
+
         return Response({"message": "Successfully updated ticket type.",
             "updated_fields": serializer.validated_data,
             "data": serializer.data}, status=status.HTTP_200_OK)
