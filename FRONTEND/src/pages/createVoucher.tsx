@@ -114,13 +114,10 @@ const CreateVoucher: React.FC = () => {
                 alert(`Voucher of $${amount} created successfully.`);
                 setSelectedMerchantId(null);
                 setAmount("");
-                // Refresh voucher lists
-                const [newSoldVouchers, newBoughtVouchers] = await Promise.all([
-                    voucherApi.fetchSoldVouchers(),
-                    voucherApi.fetchBoughtVouchers()
-                ]);
-                setSoldVouchers(newSoldVouchers);
+
+                const newBoughtVouchers = await  voucherApi.fetchBoughtVouchers()
                 setBoughtVouchers(newBoughtVouchers);
+
             } else {
                 alert("Failed to create voucher. Please try again.");
             }
