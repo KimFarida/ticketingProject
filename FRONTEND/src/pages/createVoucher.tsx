@@ -111,7 +111,7 @@ const CreateVoucher: React.FC = () => {
             const response = await voucherApi.createVoucher(voucherData);
 
             if (response.status === 201) {
-                alert(`Voucher of $${amount} created successfully.`);
+                alert(`Voucher of ₦${amount} created successfully.`);
                 setSelectedMerchantId(null);
                 setAmount("");
 
