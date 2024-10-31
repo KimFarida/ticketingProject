@@ -110,6 +110,12 @@ def update_ticket_type(request, id):
         # Update the `valid_until` field of all tickets with this TicketType
         Ticket.objects.filter(ticket_type=ticket_type).update(valid_until=ticket_type.expiration_date)
 
+        #If there is an increase in expiration date, should reflect for all tickets
+        if ticket_type.expiration_date > timezone.now():
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=True)
+        else:
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False)
+
         return Response({"message": "Successfully updated ticket type.",
             "updated_fields": serializer.validated_data,
             "data": serializer.data}, status=status.HTTP_200_OK)
