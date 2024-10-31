@@ -350,6 +350,7 @@ def check_ticket_validity(request, ticket_code):
         if ticket.valid and ticket.valid_until > timezone.now():
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
+            ticket.valid = False
             return Response({"valid": False, "ticket_info": ticket_info, "message": "Ticket is invalid or expired."},
                             status=status.HTTP_200_OK)
 
