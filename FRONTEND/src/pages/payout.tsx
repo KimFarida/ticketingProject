@@ -1,8 +1,11 @@
 import { faHouse, faPlus, faChartLine, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  api from '../api/axios';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from "react";
 import SidebarComponent from "../components/sidebar";
+import PayoutSearch from "@/components/payoutSearch";
+import {PayoutResponse} from "@/types/types.ts";
 
 interface PayoutList {
     amount: string;
@@ -63,31 +66,47 @@ export function Payout() {
         
         setError("");
         setLoading(true);
-        try {
-            const response = await api.post('/api/payout/request/', {
-                amount: amount 
+            try {
+                await api.post<PayoutResponse>('/api/payout/request/', {
+                    amount: amount
             });
-            console.log('Payout Request Response:', response.data);
-            fetchPayoutList(); 
-            setAmount(""); 
+
+            await fetchPayoutList();
+            setAmount("");
         } catch (err) {
-            console.error('Error requesting payout:', err);
-            setError("Failed to request payout.");
+            const error = err as AxiosError;
+
+            // Use optional chaining to safely access the error response
+            const reason = error.response?.data?.amount?.[0];
+            if (reason) {
+                setError(reason);
+            } else {
+                setError("Failed to request payout.");
+            }
         } finally {
             setLoading(false);
         }
     };
 
+
     return (
         <div className="flex h-screen">
             <SidebarComponent menu={menuItems} />
             <div className="flex-grow p-4">
+                <h2 className="text-xl font-bold mb-6">Request Payout</h2>
+                <h4 className="text-xl font-medium mb-6">Current Bonus Balance : {localStorage.getItem("bonus_balance")}</h4>
                 <div className="mb-4">
                     <input
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="Enter amount"
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            // Check for negative values
+                            if (value === '' || Number(value) >= 0) {
+                                setAmount(value);
+                            }
+                        }}
+                        placeholder="Enter amount"PVW-677
                         className="border rounded px-3 py-2 mr-2"
                     />
                     <button
@@ -99,16 +118,39 @@ export function Payout() {
                     </button>
                     {error && <span className="text-red-500 ml-2">{error}</span>}
                 </div>
-                
-                <h2 className="text-lg font-semibold mb-2">Payout List</h2>
-                <ul>
-                    {payoutList.map((payout) => (
-                        <li key={payout.payment_id} className="flex justify-between border-b py-2">
-                            <span>{payout.amount}</span>
-                            <span>{payout.status}</span>
+
+
+                <h2 className="text-xl font-bold mb-4">Search</h2>
+                <div className="mb-4">
+                    <PayoutSearch/>
+                </div>
+                <div className="payout-history">
+                    <h2 className="text-xl font-bold mb-4">Payout History</h2>
+                    <ul className="border rounded-lg shadow-md">
+                        <li className="flex justify-between border-b bg-gray-200 py-2 font-semibold">
+                            <span>Payment ID</span>
+                            <span>Requested At</span>
+                            <span>Amount</span>
+                            <span>Status</span>
                         </li>
-                    ))}
-                </ul>
+                        {payoutList.map((payout) => (
+                            <li key={payout.payment_id} className="flex justify-between border-b py-2">
+                                <span>{payout.payment_id}</span>
+                                <span>{new Date(payout.requested_at).toLocaleString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true,
+                                })}</span>
+                                <span>&#8358;{payout.amount}</span>
+                                <span>{payout.status}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
             </div>
         </div>
     );
