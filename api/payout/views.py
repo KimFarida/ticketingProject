@@ -195,7 +195,7 @@ def process_payout(request, payment_id):
 
     status_value = request.data.get('status')
     if status_value not in ['approved', 'rejected','pending']:
-        return Response({"error": "Invalid status. Use 'approved' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid status. Use 'approved' ,'pending' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
 
     with transaction.atomic():
         if status_value == 'approved':
