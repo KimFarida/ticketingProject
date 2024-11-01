@@ -13,6 +13,7 @@ import { AdminTicketPage } from "./pages/adminTicketPage";
 import { AdminPayout } from "./pages/adminPayout";
 import { Payout } from "./pages/payout";
 import  CreateVoucher from './pages/createVoucher';
+import AboutUs from "./pages/aboutUs";
 import "./App.css";
 
 interface ProtectedRouteProps {
@@ -37,6 +38,7 @@ const App: React.FC = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/signin" element={<SignInPage />} />
+      <Route path="/about-us" element={<AboutUs />} />
 
       <Route path="/admin" element={
         <ProtectedRoute>

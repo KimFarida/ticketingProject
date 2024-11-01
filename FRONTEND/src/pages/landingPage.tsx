@@ -29,10 +29,10 @@ function LandingPage(){
                     </div>
                     <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-[#000000] z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
                         <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
-                            <li><a href="#">Home</a></li>
+                            <li><Link to='/'><a>Home</a></Link></li>
                             {/*<li><a href="#"></a>Become an Agent</li>*/}
                             <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">About Us</a></li>
+                            <li><Link to='/about-us'><a>About Us</a></Link></li>
                         </ul>
                         
                     </div>
