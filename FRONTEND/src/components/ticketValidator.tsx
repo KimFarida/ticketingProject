@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search,  X} from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -28,12 +28,17 @@ const TicketValidator = () => {
 
     try {
       const response = await api.get<ValidateTicketInfo>(`/api/ticket/check-ticket/${ticketCode.trim()}/`);
+      console.log((response.data))
       const data = response.data;
 
       setTicketData(data);
       setShowDetails(true);
     } catch (err) {
-      setError('Failed to validate ticket. Please try again.');
+      if (err.status === 410)
+        setError('Invalid Ticket : Deleted Ticket Type')
+      else{
+        setError('Failed to validate ticket. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -79,15 +84,25 @@ const TicketValidator = () => {
 
       <AlertDialog open={showDetails} onOpenChange={setShowDetails}>
         <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center justify-between">
-              Ticket Details
+          <AlertDialogHeader className="relative">
+            {/* Title and Validity Status */}
+            <div className="flex items-center justify-between space-x-2">
+              <AlertDialogTitle className="text-lg font-semibold">Ticket Details</AlertDialogTitle>
               <span className={`px-2 py-1 rounded text-sm ${
                 ticketData?.valid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
                 {ticketData?.valid ? 'Valid' : 'Invalid'}
               </span>
-            </AlertDialogTitle>
+            </div>
+
+            {/* Close button positioned in the top right */}
+            <button
+              onClick={() => setShowDetails(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </AlertDialogHeader>
 
           {ticketData?.ticket_info && (

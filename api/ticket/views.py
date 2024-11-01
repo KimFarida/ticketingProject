@@ -110,6 +110,12 @@ def update_ticket_type(request, id):
         # Update the `valid_until` field of all tickets with this TicketType
         Ticket.objects.filter(ticket_type=ticket_type).update(valid_until=ticket_type.expiration_date)
 
+        #If there is an increase in expiration date, should reflect for all tickets
+        if ticket_type.expiration_date > timezone.now():
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=True)
+        else:
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False)
+
         return Response({"message": "Successfully updated ticket type.",
             "updated_fields": serializer.validated_data,
             "data": serializer.data}, status=status.HTTP_200_OK)
@@ -135,8 +141,12 @@ def delete_ticket_type(request, id):
     """
     try:
         ticket_type = TicketType.objects.get(pk=id)
-        ticket_type.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        with transaction.atomic():
+            #Invalidate Every Ticket Created Using This Type and set the Ticket Type to Null
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False, ticket_type=None)
+            ticket_type.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
     except TicketType.DoesNotExist:
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -329,6 +339,8 @@ def check_ticket_validity(request, ticket_code):
 
     try:
         ticket = Ticket.objects.get(ticket_code=ticket_code)
+        if ticket.ticket_type is None:
+            return Response({"error": "Ticket type deleted"}, status=status.HTTP_410_GONE)
         ticket_info = {
             "ticket_code": ticket.ticket_code,
             "buyer_name": ticket.buyer_name,
@@ -350,8 +362,9 @@ def check_ticket_validity(request, ticket_code):
         if ticket.valid and ticket.valid_until > timezone.now():
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
+            ticket.valid = False
             return Response({"valid": False, "ticket_info": ticket_info, "message": "Ticket is invalid or expired."},
-                            status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_200_OK)
 
     except Ticket.DoesNotExist:
         return Response({"error": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)

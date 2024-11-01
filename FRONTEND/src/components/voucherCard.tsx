@@ -19,7 +19,7 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
     return (
         <div className="p-6 bg-gray-800 text-white rounded-lg shadow-md">
             <h3>Voucher Code: {voucher.voucher_code}</h3>
-            <p>Amount: ${voucher.amount}</p>
+            <p>Amount: &#8358;{voucher.amount}</p>
             <p>Created At: {new Date(voucher.created_at).toLocaleString()}</p>
             <p>Processed: {voucher.processed ? "Yes" : "No"}</p>
 

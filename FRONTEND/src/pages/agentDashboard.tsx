@@ -21,8 +21,10 @@ function AgentPage() {
 
     const getBalance = async ()=>{
         const response = await api.get('/api/account/get-user/');
-        const balance= response.data.wallet.voucher_balance as number;
-        setBalance(balance);
+        const voucher_balance= response.data.wallet.voucher_balance as number;
+        const bonus_balance = response.data.wallet.bonus_balance
+        localStorage.setItem("bonus_balance", bonus_balance.toString());
+        setBalance(voucher_balance);
 
 
     }

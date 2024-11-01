@@ -111,16 +111,13 @@ const CreateVoucher: React.FC = () => {
             const response = await voucherApi.createVoucher(voucherData);
 
             if (response.status === 201) {
-                alert(`Voucher of $${amount} created successfully.`);
+                alert(`Voucher of ₦${amount} created successfully.`);
                 setSelectedMerchantId(null);
                 setAmount("");
-                // Refresh voucher lists
-                const [newSoldVouchers, newBoughtVouchers] = await Promise.all([
-                    voucherApi.fetchSoldVouchers(),
-                    voucherApi.fetchBoughtVouchers()
-                ]);
-                setSoldVouchers(newSoldVouchers);
+
+                const newBoughtVouchers = await  voucherApi.fetchBoughtVouchers()
                 setBoughtVouchers(newBoughtVouchers);
+
             } else {
                 alert("Failed to create voucher. Please try again.");
             }
