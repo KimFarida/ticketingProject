@@ -213,8 +213,8 @@ def process_payout(request, payment_id):
     tickets_sold = Ticket.objects.filter(
         agent=user,
         created_at__gte=start_of_month,
-        created_at__lt=start_of_next_month.count()
-    )
+        created_at__lt=start_of_next_month
+    ).count()
 
     # Determine salary based on ticket quota
     if tickets_sold >= payout_settings.monthly_quota:
