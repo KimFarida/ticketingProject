@@ -192,28 +192,30 @@ def ticket_sales_log(request):
 @swagger_auto_schema(
     method='POST',
     operation_summary="Update Payout Settings",
-    operation_description="Admin updates the monthly ticket quota, base salary, and percentage for partial payout.",
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        required=['monthly_quota', 'full_salary', 'partial_salary_percentage'],
-        properties={
-            'monthly_quota': openapi.Schema(
-                type=openapi.TYPE_INTEGER,
-                description="The target number of tickets to be sold monthly for full payout.",
-                example=210
-            ),
-            'full_salary': openapi.Schema(
-                type=openapi.TYPE_NUMBER,
-                description="The full monthly salary amount to be paid when the quota is met.",
-                example=1000.00
-            ),
-            'partial_salary_percentage': openapi.Schema(
-                type=openapi.TYPE_NUMBER,
-                description="Percentage of the salary to pay if half the quota is met.",
-                example=20.0
-            ),
-        },
-    ),
+    operation_description="Admin updates the monthly ticket quota, base salary, and percentage for partial payout when half of the quota is met.",
+    manual_parameters=[
+        openapi.Parameter(
+            'monthly_quota',
+            openapi.IN_QUERY,
+            description="The target number of tickets to be sold monthly for full payout.",
+            type=openapi.TYPE_INTEGER,
+            required=True,
+        ),
+        openapi.Parameter(
+            'full_salary',
+            openapi.IN_QUERY,
+            description="The full monthly salary amount to be paid when the quota is met.",
+            type=openapi.TYPE_NUMBER,
+            required=True,
+        ),
+        openapi.Parameter(
+            'partial_salary_percentage',
+            openapi.IN_QUERY,
+            description="Percentage of the salary to pay if half the quota is met.",
+            type=openapi.TYPE_NUMBER,
+            required=True,
+        ),
+    ],
     responses={
         200: openapi.Response(
             description="Payout settings updated successfully.",
