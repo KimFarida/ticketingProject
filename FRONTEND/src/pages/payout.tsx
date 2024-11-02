@@ -77,7 +77,7 @@ export function Payout() {
             const error = err as AxiosError;
 
             // Use optional chaining to safely access the error response
-            const reason = error.response?.data?.amount?.[0];
+            const reason = (error.response?.data as any)?.amount?.[0];
             if (reason) {
                 setError(reason);
             } else {

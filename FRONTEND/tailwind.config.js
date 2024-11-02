@@ -69,7 +69,10 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+		boxShadow: {
+			'custom-lg': '0 10px 20px rgba(34, 197, 94, 0.7)', // Green shadow as example
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],

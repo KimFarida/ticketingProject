@@ -33,7 +33,7 @@ const TicketValidator = () => {
 
       setTicketData(data);
       setShowDetails(true);
-    } catch (err) {
+    } catch (err: any) {
       if (err.status === 410)
         setError('Invalid Ticket : Deleted Ticket Type')
       else{

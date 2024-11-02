@@ -27,12 +27,12 @@ function LandingPage(){
                     <div>
                     <img src={AppLogo} alt="App Logo" className="w-24 " />
                     </div>
-                    <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-gray-500 z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
+                    <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-[#000000] z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
                         <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
-                            <li><a href="#">Home</a></li>
+                            <li><Link to='/'><a>Home</a></Link></li>
                             {/*<li><a href="#"></a>Become an Agent</li>*/}
                             <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">About Us</a></li>
+                            <li><Link to='/about-us'><a>About Us</a></Link></li>
                         </ul>
                         
                     </div>
@@ -109,32 +109,32 @@ function LandingPage(){
 
             {/* FOOTER */}
             
-            <footer className="mt-20 text-gray-700 m-2">
-                <div className="">
+            <footer className="mt-20 text-white bg-[#000000]">
+                <div className="m-2">
                     <h2>Profit Play is an event ticketing platform for memorable experiences in Africa</h2>
                 </div>
-                <div className="md:w-1/2 text-left p-4">
-                    <div className="flex justify-content justify-between ml-10 mr-10">
-
+                <div className=" w-full flex justify-center">
+                    <div className="w-full md:w-3/4 lg:w-2/3 p-2 flex flex-start justify-between">
                         <div>
-                            <p>Company</p>
-                            <ul className="text-sm italic">
-                                <li>About Us</li>
-                                <li>How  it works</li>
-                                <li>Blog</li>
+                            <p className='font-semibold'>Company</p>
+                            <ul className="text-sm italic grid grid-cols-2 gap-2">
+                                <li className='m-1'>About Us</li>
+                                <li className='m-1'>How it works</li>
+                                <li className='m-1'>Blog</li>
                             </ul>
                         </div>
                         <div>
-                            <p>Follow Us</p>
-                            <ul  className="text-sm italic">
-                                <li>Facebook</li>
-                                <li>X(Twitter)</li>
-                                <li>Instagram</li>
-                                <li>Tiktok</li>
+                            <p className='font-semibold'>Follow Us</p>
+                            <ul className="text-sm italic grid grid-cols-2 gap-2">
+                                <li className='m-1'>Facebook</li>
+                                <li className='m-1'>X(Twitter)</li>
+                                <li className='m-1'>Instagram</li>
+                                <li className='m-1'>Tiktok</li>
                             </ul>
                         </div>
                     </div>
                 </div>
+
             </footer>
             
         </>
