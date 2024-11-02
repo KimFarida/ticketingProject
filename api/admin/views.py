@@ -240,7 +240,6 @@ def ticket_sales_log(request):
     }
 )
 @api_view(['POST'])
-@api_view(['POST'])
 @permission_classes([IsAdminUser])
 def update_payout_settings(request):
     """
