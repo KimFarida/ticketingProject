@@ -12,6 +12,7 @@ from drf_yasg import openapi
 from django.db.models import Count, Sum
 import csv
 from django.utils import timezone
+from decimal import Decimal
 
 
 @swagger_auto_schema(
@@ -246,8 +247,8 @@ def update_payout_settings(request):
     """
     try:
         settings = PayoutSettings.objects.first() or PayoutSettings()
-        settings.monthly_quota = request.data.get('monthly_quota', settings.monthly_quota)
-        settings.full_salary = request.data.get('full_salary', settings.full_salary)
+        settings.monthly_quota = Decimal(request.data.get('monthly_quota', settings.monthly_quota))
+        settings.full_salary = Decimal(request.data.get('full_salary', settings.full_salary))
         settings.partial_salary_percentage = request.data.get('partial_salary_percentage', settings.partial_salary_percentage)
         settings.save()
 
