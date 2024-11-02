@@ -5,10 +5,11 @@ from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from api.models import PayoutRequest
+from api.models import PayoutRequest, PayoutSettings, Ticket
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError
+from django.utils import  timezone
 
 
 
@@ -186,24 +187,53 @@ def list_payout_requests(request):
 def process_payout(request, payment_id):
     """
     Admin: Approve or reject a payout request.
-    Deducts the user's bonus balance if the payout is approved and returns the details of the payout request.
+    Deducts the user's bonus balance if the payout is approved and calculates the salary based on quota fulfillment.
     """
     try:
         payout_request = PayoutRequest.objects.get(payment_id=payment_id)
-    except PayoutRequest.DoesNotExist:
-        return Response({"error": "Payout request not found."}, status=status.HTTP_404_NOT_FOUND)
+        payout_settings = PayoutSettings.objects.first()
+    except (PayoutRequest.DoesNotExist, PayoutSettings.DoesNotExist):
+        return Response({"error": "Payout request or settings not found."}, status=status.HTTP_404_NOT_FOUND)
 
     status_value = request.data.get('status')
-    if status_value not in ['approved', 'rejected','pending']:
-        return Response({"error": "Invalid status. Use 'approved' ,'pending' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
+    if status_value not in ['approved', 'rejected', 'pending']:
+        return Response({"error": "Invalid status. Use 'approved', 'pending', or 'rejected'."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user = payout_request.user
+    start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    # Calculate the start of the next month
+    if start_of_month.month == 12:  # December edge case
+        start_of_next_month = start_of_month.replace(year=start_of_month.year + 1, month=1)
+    else:
+        start_of_next_month = start_of_month.replace(month=start_of_month.month + 1)
+
+    # Count tickets sold by the agent in the current month
+    tickets_sold = Ticket.objects.filter(
+        agent=user,
+        created_at__gte=start_of_month,
+        created_at__lt=start_of_next_month.count()
+    )
+
+    # Determine salary based on ticket quota
+    if tickets_sold >= payout_settings.monthly_quota:
+        # Full salary for meeting quota
+        payout_request.salary = payout_settings.full_salary
+    elif tickets_sold >= payout_settings.monthly_quota / 2:
+        # Partial salary for meeting half of the quota
+        payout_request.salary = (payout_settings.partial_salary_percentage / 100) * payout_settings.full_salary
+    else:
+        # No salary if quota isn't half-met
+        payout_request.salary = 0
 
     with transaction.atomic():
         if status_value == 'approved':
-            user = payout_request.user
+            # Deduct bonus balance if payout is approved
             user.wallet.bonus_balance -= payout_request.amount
             user.wallet.save()
 
-    # Update payout request status
+    # Update payout request status and save the calculated salary amount
     payout_request.status = status_value
     payout_request.save()
 
@@ -211,13 +241,14 @@ def process_payout(request, payment_id):
         "message": f"Payout request {status_value} successfully.",
         "payment_id": payout_request.payment_id,
         "payout_request": {
-            "user":{
-                "login_id": payout_request.user.login_id,
-                "id": payout_request.user_id,
-                "name": f'{payout_request.user.first_name} {payout_request.user.last_name}',
-                "role": payout_request.user.role
+            "user": {
+                "login_id": user.login_id,
+                "id": user.id,
+                "name": f'{user.first_name} {user.last_name}',
+                "role": user.role
             },
             "amount": payout_request.amount,
+            "salary": payout_request.salary,
             "requested_at": payout_request.requested_at,
             "status": payout_request.status,
             "payment_id": payout_request.payment_id
