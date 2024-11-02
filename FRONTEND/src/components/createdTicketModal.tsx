@@ -36,7 +36,7 @@ const TicketCreationModal: React.FC<TicketCreationModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto"> {/* Add max-height and overflow */}
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Ticket Created Successfully</span>
@@ -143,6 +143,7 @@ const TicketCreationModal: React.FC<TicketCreationModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
+
   );
 };
 

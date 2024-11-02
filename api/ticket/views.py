@@ -182,7 +182,7 @@ def create_tickets(request):
     # wallet.bonus_balance += Decimal(100000)
     # wallet.save()
     ticket_type_id = request.data.get('ticket_type')
-    quantity = int(request.data.get('quantity', 1))  # Default to 1 if not provided
+    quantity = int(request.data.get('quantity', 1))
     buyer_name = request.data.get('buyer_name')
     buyer_contact = request.data.get('buyer_contact')
 
