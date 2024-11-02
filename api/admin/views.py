@@ -240,21 +240,28 @@ def ticket_sales_log(request):
     }
 )
 @api_view(['POST'])
+@api_view(['POST'])
 @permission_classes([IsAdminUser])
 def update_payout_settings(request):
     """
     Admin: Update monthly quota, full salary, and partial salary percentage.
     """
+    required_fields = ['monthly_quota', 'full_salary', 'partial_salary_percentage']
+
+    # Check for missing fields in the request data
+    missing_fields = [field for field in required_fields if field not in request.data]
+    if missing_fields:
+        return Response({"error": f"Missing required fields: {', '.join(missing_fields)}"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
     try:
+        # Get or create PayoutSettings instance
         settings = PayoutSettings.objects.first() or PayoutSettings()
 
-        # Check if each field exists in the request data
-        if 'monthly_quota' in request.data:
-            settings.monthly_quota = Decimal(request.data['monthly_quota'])
-        if 'full_salary' in request.data:
-            settings.full_salary = Decimal(request.data['full_salary'])
-        if 'partial_salary_percentage' in request.data:
-            settings.partial_salary_percentage = request.data['partial_salary_percentage']
+        # Update settings with validated data
+        settings.monthly_quota = Decimal(request.data['monthly_quota'])
+        settings.full_salary = Decimal(request.data['full_salary'])
+        settings.partial_salary_percentage = Decimal(request.data['partial_salary_percentage'])
 
         settings.save()
 
@@ -266,6 +273,7 @@ def update_payout_settings(request):
                 "partial_salary_percentage": settings.partial_salary_percentage,
             }
         }, status=status.HTTP_200_OK)
+
     except (ValueError, TypeError) as e:
         return Response({
             "error": f"Invalid data format: {str(e)}"
