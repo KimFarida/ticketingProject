@@ -40,11 +40,14 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
+        salary, ticket_count = calculate_salary(user)
+
         validated_data['payment_id'] = generate_payment_id()
+        validated_data['salary'] = salary
 
         payout_request = PayoutRequest.objects.create(**validated_data)
 
-        calculate_salary(user, payout_request)
+        validated_data['ticket_count'] = ticket_count
 
         return payout_request
 

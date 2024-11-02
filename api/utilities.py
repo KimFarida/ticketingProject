@@ -45,7 +45,7 @@ def generate_payment_id():
         if not PayoutRequest.objects.filter(payment_id=payment_id).exists():
             return  payment_id
 
-def calculate_salary(user, payout_request):
+def calculate_salary(user):
     payout_settings = PayoutSettings.objects.first()
     start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
@@ -65,10 +65,12 @@ def calculate_salary(user, payout_request):
     # Determine salary based on ticket quota
     if tickets_sold >= payout_settings.monthly_quota:
         # Full salary for meeting quota
-        payout_request.salary = payout_settings.full_salary
+        salary = payout_settings.full_salary
     elif tickets_sold >= payout_settings.monthly_quota / 2:
         # Partial salary for meeting half of the quota
-        payout_request.salary = (payout_settings.partial_salary_percentage / 100) * payout_settings.full_salary
+        salary = (payout_settings.partial_salary_percentage / 100) * payout_settings.full_salary
     else:
         # No salary if quota isn't half-met
-        payout_request.salary = 0
+        salary = 0
+
+    return salary, tickets_sold
