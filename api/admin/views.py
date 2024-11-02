@@ -246,22 +246,23 @@ def update_payout_settings(request):
     """
     Admin: Update monthly quota, full salary, and partial salary percentage.
     """
+    # Define required fields for validation
     required_fields = ['monthly_quota', 'full_salary', 'partial_salary_percentage']
 
-    # Check for missing fields in the request data
-    missing_fields = [field for field in required_fields if field not in request.data]
+    # Check for missing fields in the request query params
+    missing_fields = [field for field in required_fields if field not in request.query_params]
     if missing_fields:
         return Response({"error": f"Missing required fields: {', '.join(missing_fields)}"},
                         status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        # Get or create PayoutSettings instance
+        # Get or create the PayoutSettings instance
         settings = PayoutSettings.objects.first() or PayoutSettings()
 
-        # Update settings with validated data
-        settings.monthly_quota = Decimal(request.data['monthly_quota'])
-        settings.full_salary = Decimal(request.data['full_salary'])
-        settings.partial_salary_percentage = Decimal(request.data['partial_salary_percentage'])
+        # Update settings based on query params
+        settings.monthly_quota = Decimal(request.query_params['monthly_quota'])
+        settings.full_salary = Decimal(request.query_params['full_salary'])
+        settings.partial_salary_percentage = Decimal(request.query_params['partial_salary_percentage'])
 
         settings.save()
 
@@ -281,4 +282,3 @@ def update_payout_settings(request):
     except Exception as e:
         return Response({
             "error": str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
