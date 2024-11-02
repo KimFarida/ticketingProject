@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-from api.models import User, Merchant, Agent, Ticket
+from api.models import User, Merchant, Agent, Ticket, PayoutSettings
 from rest_framework.response import Response
 from .serializer import AgentSerializer, MerchantSerializer
 from drf_yasg.utils import swagger_auto_schema
@@ -223,3 +223,74 @@ def ticket_sales_log(request):
 
     return Response({"error": "Invalid format. Choose 'json' or 'csv'."}, status=400)
 
+
+@swagger_auto_schema(
+    method='POST',
+    operation_summary="Update Payout Settings",
+    operation_description="Admin updates the monthly ticket quota, base salary, and percentage for partial payout when half of the quota is met.",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'monthly_quota': openapi.Schema(
+                type=openapi.TYPE_INTEGER,
+                description="The target number of tickets to be sold monthly for full payout.",
+                example=210
+            ),
+            'full_salary': openapi.Schema(
+                type=openapi.TYPE_NUMBER,
+                description="The full monthly salary amount to be paid when the quota is met.",
+                example=1000.00
+            ),
+            'partial_salary_percentage': openapi.Schema(
+                type=openapi.TYPE_NUMBER,
+                description="Percentage of the salary to pay if half the quota is met.",
+                example=20.0
+            ),
+        },
+        required=['monthly_quota', 'full_salary', 'partial_salary_percentage'],
+    ),
+    responses={
+        200: openapi.Response(
+            description="Payout settings updated successfully.",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, example="Payout settings updated successfully."),
+                    'settings': openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'monthly_quota': openapi.Schema(type=openapi.TYPE_INTEGER, example=210),
+                            'full_salary': openapi.Schema(type=openapi.TYPE_NUMBER, example=1000.00),
+                            'partial_salary_percentage': openapi.Schema(type=openapi.TYPE_NUMBER, example=20.0),
+                        }
+                    ),
+                },
+            ),
+        ),
+        400: "Bad Request",
+        403: "Forbidden",
+    }
+)
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def update_payout_settings(request):
+    """
+    Admin: Update monthly quota, full salary, and partial salary percentage.
+    """
+    try:
+        settings = PayoutSettings.objects.first() or PayoutSettings()
+        settings.monthly_quota = request.data.get('monthly_quota', settings.monthly_quota)
+        settings.full_salary = request.data.get('full_salary', settings.full_salary)
+        settings.partial_salary_percentage = request.data.get('partial_salary_percentage', settings.partial_salary_percentage)
+        settings.save()
+
+        return Response({
+            "message": "Payout settings updated successfully.",
+            "settings": {
+                "monthly_quota": settings.monthly_quota,
+                "full_salary": settings.full_salary,
+                "partial_salary_percentage": settings.partial_salary_percentage,
+            }
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
