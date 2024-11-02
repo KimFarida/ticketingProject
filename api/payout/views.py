@@ -10,6 +10,7 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError
 from django.utils import  timezone
+from api.utilities import calculate_salary
 
 
 
@@ -45,7 +46,8 @@ def request_payout(request):
                          "payout_id": payout_request.payment_id,
                          "payout_request": serializer.data,
                          "requested_at": payout_request.requested_at,
-                         "status": payout_request.status
+                         "status": payout_request.status,
+                         "salary": payout_request.salary
 
                          },
                         status=status.HTTP_201_CREATED)
@@ -191,7 +193,6 @@ def process_payout(request, payment_id):
     """
     try:
         payout_request = PayoutRequest.objects.get(payment_id=payment_id)
-        payout_settings = PayoutSettings.objects.first()
     except (PayoutRequest.DoesNotExist, PayoutSettings.DoesNotExist):
         return Response({"error": "Payout request or settings not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -201,31 +202,6 @@ def process_payout(request, payment_id):
                         status=status.HTTP_400_BAD_REQUEST)
 
     user = payout_request.user
-    start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-
-    # Calculate the start of the next month
-    if start_of_month.month == 12:  # December edge case
-        start_of_next_month = start_of_month.replace(year=start_of_month.year + 1, month=1)
-    else:
-        start_of_next_month = start_of_month.replace(month=start_of_month.month + 1)
-
-    # Count tickets sold by the agent in the current month
-    tickets_sold = Ticket.objects.filter(
-        agent=user,
-        created_at__gte=start_of_month,
-        created_at__lt=start_of_next_month
-    ).count()
-
-    # Determine salary based on ticket quota
-    if tickets_sold >= payout_settings.monthly_quota:
-        # Full salary for meeting quota
-        payout_request.salary = payout_settings.full_salary
-    elif tickets_sold >= payout_settings.monthly_quota / 2:
-        # Partial salary for meeting half of the quota
-        payout_request.salary = (payout_settings.partial_salary_percentage / 100) * payout_settings.full_salary
-    else:
-        # No salary if quota isn't half-met
-        payout_request.salary = 0
 
     with transaction.atomic():
         if status_value == 'approved':

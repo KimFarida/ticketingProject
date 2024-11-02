@@ -4,8 +4,9 @@ from api.models import PayoutRequest
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
-from api.utilities import generate_payment_id
+from api.utilities import generate_payment_id, calculate_salary
 from api.admin.serializer import UserDSerializer
+
 
 class PayoutRequestSerializer(serializers.ModelSerializer):
     user = UserDSerializer(read_only=True)
@@ -38,9 +39,12 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
     #     return attrs
 
     def create(self, validated_data):
+        user = self.context['request'].user
         validated_data['payment_id'] = generate_payment_id()
 
         payout_request = PayoutRequest.objects.create(**validated_data)
+
+        calculate_salary(user, payout_request)
 
         return payout_request
 
