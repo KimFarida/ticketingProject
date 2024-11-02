@@ -247,9 +247,15 @@ def update_payout_settings(request):
     """
     try:
         settings = PayoutSettings.objects.first() or PayoutSettings()
-        settings.monthly_quota = Decimal(request.data.get('monthly_quota', settings.monthly_quota))
-        settings.full_salary = Decimal(request.data.get('full_salary', settings.full_salary))
-        settings.partial_salary_percentage = request.data.get('partial_salary_percentage', settings.partial_salary_percentage)
+
+        # Check if each field exists in the request data
+        if 'monthly_quota' in request.data:
+            settings.monthly_quota = Decimal(request.data['monthly_quota'])
+        if 'full_salary' in request.data:
+            settings.full_salary = Decimal(request.data['full_salary'])
+        if 'partial_salary_percentage' in request.data:
+            settings.partial_salary_percentage = request.data['partial_salary_percentage']
+
         settings.save()
 
         return Response({
@@ -260,5 +266,11 @@ def update_payout_settings(request):
                 "partial_salary_percentage": settings.partial_salary_percentage,
             }
         }, status=status.HTTP_200_OK)
+    except (ValueError, TypeError) as e:
+        return Response({
+            "error": f"Invalid data format: {str(e)}"
+        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "error": str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
