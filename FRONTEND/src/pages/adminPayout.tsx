@@ -93,7 +93,7 @@ export function AdminPayout() {
                   </h2>
                   <p className="text-sm">{payout.user.email}</p>
                   <p className="text-sm">{payout.user.phone_number}</p>
-                  <p className="text-sm">Amount: {payout.amount}</p>
+                  <p className="text-sm">Amount: &#8358;{payout.amount}</p>
                   <p className="text-sm">Status: {payout.status}</p>
                   {payout.status === "pending" && (
                     <button
