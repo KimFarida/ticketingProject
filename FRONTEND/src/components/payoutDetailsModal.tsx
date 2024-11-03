@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from './modal';
 import { PayoutDetails } from '../types/types';
 
-interface PayOutDetailsModalProps {
+interface PayOutRequestDetailsModalProps {
     isVisible: boolean;
     onClose: () => void;
     payoutRequest : PayoutDetails | null;
@@ -10,7 +10,7 @@ interface PayOutDetailsModalProps {
     showProcessButton?: boolean;
 }
 
-const PayOutDetailsModal: React.FC<PayOutDetailsModalProps> = ({
+const PayOutRequestDetailsModal: React.FC<PayOutRequestDetailsModalProps> = ({
     isVisible,
     onClose,
     payoutRequest,
@@ -46,7 +46,8 @@ return (
 
                 <div className="space-y-2">
                     <p><strong>Payment ID:</strong> {payoutRequest.payment_id}</p>
-                    <p><strong>Amount:</strong> ${payoutRequest.amount}</p>
+                    <p><strong>Amount:</strong> &#8358;{payoutRequest.amount}</p>
+                    <p><strong>Salary:</strong> &#8358;{payoutRequest.salary}</p>
                     <p><strong>Status:</strong> {selectedStatus}</p>
                     <p><strong>Requested At:</strong> {new Date(payoutRequest.requested_at).toLocaleString()}</p>
 
@@ -94,7 +95,7 @@ return (
                 </div>
             </div>
         </Modal>
-    );
+);
 };
 
-export default PayOutDetailsModal;
+export default PayOutRequestDetailsModal;
