@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
-import {PayoutDetails, PayoutResponse} from "../types/types.ts";
+import {PayoutDetails} from "../types/types.ts";
 import PayoutDetailsModal from "./payoutDetailsModal";
 
 interface PayOutSearchProps {
@@ -26,8 +26,9 @@ const PayOutSearch: React.FC<PayOutSearchProps> = ({ role, onPayOutProcess }) =>
         setError(null);
 
         try {
-            const response = await api.get<PayoutResponse>(`/api/payout/get_payout_by_id/${payoutId.trim()}`);
-            setPayoutDetails(response.data.data);
+            const response = await api.get(`/api/payout/get_payout_by_id/${payoutId.trim()}`);
+            const data:PayoutDetails = response.data.data;
+            setPayoutDetails(data);
             setModalVisible(true);
         } catch (error) {
             console.error('Error searching payout request:', error);
