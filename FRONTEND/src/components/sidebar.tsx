@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, ReactElement} from 'react';
 import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -6,7 +6,6 @@ import {
   faCreditCard,
   faHouse,
   faMoneyBill1,
-  faPlus,
   faShop,
   faTicket, faUser,
   faUsers,
@@ -19,7 +18,7 @@ interface Menus {
   id: number;
   name: string;
   link?: string;
-  icon: JSX.Element;
+  icon: ReactElement;
 }
 
 interface SidebarProps {
