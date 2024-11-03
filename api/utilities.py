@@ -62,7 +62,6 @@ def calculate_salary(user):
         created_at__lt=start_of_next_month
     ).count()
 
-    # Determine salary based on ticket quota
     if tickets_sold >= payout_settings.monthly_quota:
         # Full salary for meeting quota
         salary = payout_settings.full_salary
@@ -73,4 +72,4 @@ def calculate_salary(user):
         # No salary if quota isn't half-met
         salary = 0
 
-    return salary, tickets_sold
+    return salary, tickets_sold, payout_settings.monthly_quota
