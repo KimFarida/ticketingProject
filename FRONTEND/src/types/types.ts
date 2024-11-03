@@ -123,24 +123,24 @@ export interface PayoutDetails{
     status:string;
     payment_id:string;
     user: User;
+    salary: string;
 
 }
 export interface PayoutResponse {
     message: string;
-    data: PayoutDetails;
+    payment_id: string,
+    payout_details : {
+        amount: string
+        salary : number
+        tickets_sold : number
+        monthly_quota: number
+    }
+    requested_at : string
+    status : string
 }
 
 export interface PayoutList {
-  amount: string;
-  requested_at: string;
-  status: string;
-  payment_id: string;
-  user: {
-    role: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone_number: string;
-  };
+    message : string
+    data : PayoutDetails []
 }
 
