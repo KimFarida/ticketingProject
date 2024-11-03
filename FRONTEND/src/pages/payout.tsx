@@ -1,39 +1,21 @@
-import { faHouse, faPlus, faChartLine, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  api from '../api/axios';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from "react";
-import SidebarComponent from "../components/sidebar";
+import SidebarComponent, {menuAgent} from "../components/sidebar";
 import PayoutSearch from "@/components/payoutSearch";
-import {PayoutResponse} from "@/types/types.ts";
+import PayoutRequestModal from "@/components/payoutRequestModal.tsx";
+import {PayoutResponse, PayoutDetails} from "@/types/types.ts";
 
-interface PayoutList {
-    amount: string;
-    requested_at: string;
-    status: string;
-    payment_id: string;
-    user: {
-        role: string;
-        first_name: string;
-        last_name: string;
-        email: string;
-        phone_number: string;
-    };
-}
 
 export function Payout() {
-    const [payoutList, setPayoutList] = useState<PayoutList[]>([]);
+    const [payoutList, setPayoutList] = useState<PayoutDetails[]>([]);
     const [amount, setAmount] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [isRequestModalVisible, setRequestModalVisible] = useState<boolean>(false);
+    const [payoutRequest, setPayoutRequest] = useState<PayoutResponse | any>(null);
     const [error, setError] = useState<string>("");
 
-    const menuItems = [
-        { id: 1, name: 'Dashboard', link: '/agent', icon: <FontAwesomeIcon icon={faHouse} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 2, name: 'Create Vouchers', link: '/create-voucher', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 3, name: 'Create Tickets', link: '/ticket', icon: <FontAwesomeIcon icon={faPlus} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 4, name: 'Payout', link: '/payout', icon: <FontAwesomeIcon icon={faChartLine} className="w-7 h-7 object-contain text-gray-300" /> },
-        { id: 5, name: 'Profile', link: '/profile', icon: <FontAwesomeIcon icon={faUser} className="w-7 h-7 object-contain text-gray-300" /> }
-    ];
+    const menuItems = menuAgent
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -67,10 +49,12 @@ export function Payout() {
         setError("");
         setLoading(true);
             try {
-                await api.post<PayoutResponse>('/api/payout/request/', {
+                const response = await api.post<PayoutResponse>('/api/payout/request/', {
                     amount: amount
             });
 
+            setPayoutRequest(response.data);
+            setRequestModalVisible(true);
             await fetchPayoutList();
             setAmount("");
         } catch (err) {
@@ -106,7 +90,7 @@ export function Payout() {
                                 setAmount(value);
                             }
                         }}
-                        placeholder="Enter amount"PVW-677
+                        placeholder="Enter amount"
                         className="border rounded px-3 py-2 mr-2"
                     />
                     <button
@@ -119,6 +103,12 @@ export function Payout() {
                     {error && <span className="text-red-500 ml-2">{error}</span>}
                 </div>
 
+                <PayoutRequestModal
+                    isVisible={isRequestModalVisible}
+                    onClose={() => setRequestModalVisible(false)}
+                    payoutRequest = {payoutRequest}
+
+                />
 
                 <h2 className="text-xl font-bold mb-4">Search</h2>
                 <div className="mb-4">
