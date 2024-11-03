@@ -40,16 +40,29 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        salary, ticket_count = calculate_salary(user)
+        salary, tickets_sold,monthly_quota  = calculate_salary(user)
 
         validated_data['payment_id'] = generate_payment_id()
         validated_data['salary'] = salary
 
-        payout_request = PayoutRequest.objects.create(**validated_data)
+        self.salary_info = {
+            "salary": salary,
+            "tickets_sold": tickets_sold,
+            "monthly_quota": monthly_quota
+        }
 
-        validated_data['ticket_count'] = ticket_count
+        return PayoutRequest.objects.create(**validated_data)
 
-        return payout_request
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
 
+        if hasattr(self, 'salary_info'):
+            rep.update({
+                "salary": self.salary_info["salary"],
+                "tickets_sold": self.salary_info["tickets_sold"],
+                "monthly_quota": self.salary_info["monthly_quota"]
+            })
+
+        return rep
 class PayoutRequestStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=['approved', 'rejected'])
