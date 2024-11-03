@@ -43,9 +43,8 @@ def request_payout(request):
     if serializer.is_valid():
         payout_request = serializer.save(user=request.user)
         return Response({"message": "Payout request created successfully.",
-                         "payout_id": payout_request.payment_id,
-                         **serializer.validated_data,
-                         "payout_request": serializer.data,
+                         "payment_id": payout_request.payment_id,
+                         "payout_details": serializer.data,
                          "requested_at": payout_request.requested_at,
                          "status": payout_request.status,
                          },
