@@ -12,7 +12,7 @@ class PayoutRequestSerializer(serializers.ModelSerializer):
     user = UserDSerializer(read_only=True)
     class Meta:
         model = PayoutRequest
-        fields = ['amount', 'requested_at', 'status', 'payment_id', 'user']
+        fields = ['amount', 'requested_at', 'status', 'payment_id', 'user', 'salary']
 
 class PayoutRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
