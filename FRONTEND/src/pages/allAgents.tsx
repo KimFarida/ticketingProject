@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
-import BackButton from "../components/BackButton";
+import BackButton from "@/components/backButton";
 interface User {
     id: string;
     login_id: string;
