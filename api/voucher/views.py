@@ -8,7 +8,7 @@ from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSeriali
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.db import transaction
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 
 processed_param = openapi.Parameter(
@@ -96,6 +96,22 @@ def create_voucher(request):
     - On success: Details of the newly created voucher.
     - On failure: Validation error or server error.
     """
+    amount = request.data.get("amount", None)
+
+    if amount is None:
+        return Response({'error': "Amount is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        if Decimal(amount) < 0 or Decimal(amount) > 10_000 and request.user.role == 'Agent':
+            if Decimal(amount) < 0:
+                return Response(
+                    {'error': "Please enter a positive amount"},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'error': "The limit per Voucher Request for Agent is ₦10,000. Please enter a valid amount."}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError, InvalidOperation):
+        return Response({'error': "Invalid Amount. Please enter a numeric value."}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = CreateVoucherSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
         try:

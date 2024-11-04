@@ -124,7 +124,7 @@ const CreateVoucher: React.FC = () => {
         } catch (error) {
             if (isAxiosError(error)) {
                 console.error("Error creating voucher:", error.response?.data || error.message);
-                alert(`Error: ${error.response?.data?.detail || "An error occurred while creating the voucher."}`);
+                alert(`Error: ${error.response?.data?.error || "An error occurred while creating the voucher."}`);
             } else {
                 console.error("Unexpected error:", error);
                 alert("An unexpected error occurred. Please try again later.");
