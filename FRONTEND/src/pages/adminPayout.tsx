@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import SidebarComponent, {menuAdmin} from "../components/sidebar";
 import api from '../api/axios';
-import {PayoutList} from "@/types/types.ts";
+import {PayoutList, PayoutDetails} from "@/types/types.ts";
 import PayoutSearch from "@/components/payoutSearch";
 import StatusToggle from "@/components/statusToggle";
 import PayOutDetailsModal from "@/components/payoutDetailsModal";
@@ -12,7 +12,7 @@ export function AdminPayout() {
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("pending");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedPayout, setSelectedPayout] = useState<PayoutList | null>(null);
+  const [selectedPayout, setSelectedPayout] = useState<PayoutDetails | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,7 +29,7 @@ export function AdminPayout() {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
       });
-      const payoutData = response.data?.data || [];
+      const payoutData : PayoutDetails[] = response.data?.data || [];
       setPayoutList(Array.isArray(payoutData) ? payoutData : []);
       console.log('Payout List Response:', payoutData);
     } catch (err) {
