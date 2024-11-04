@@ -1,4 +1,5 @@
 import {useState, useEffect, ReactElement} from 'react';
+import BackButton from './backButton';
 import open from '../images/greater-than.png';
 import AppLogo from '../images/profitplaylogo.png';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -92,37 +93,40 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
 
   return (
     <div className="flex flex-shrink-0">
-      <div className={sidebarClasses}>
-        <img
-          src={open}
-          className={`absolute cursor-pointer -right-3 top-9 w-7 border-2 bg-[#214F02] border-white rounded-full ${!show && 'rotate-180'}`}
-          onClick={() => setShow(!show)}
-        />
-        <div className="flex gap-x-4 ml-2 items-center">
-          <div>
-            <img src={AppLogo} alt="App Logo" className="w-24 mt-4" />
-          </div>
-        </div>
-        <ul className="pt-6">
-          {menu.map((menuItem) => (
-            <li
-              key={menuItem.id}
-              className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
-              onClick={menuItem.name === 'LogOut' ? handleLogout : undefined}
-
-            >
-              <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
-                <div className="min-w-[40px]">
-                  {menuItem.icon}
+        <div className={sidebarClasses}>
+            <img
+                src={open}
+                className={`absolute cursor-pointer -right-3 top-9 w-7 border-2 bg-[#214F02] border-white rounded-full ${!show && 'rotate-180'}`}
+                onClick={() => setShow(!show)}
+            />
+            <div className="flex gap-x-4 ml-2 items-center">
+                <div>
+                    <img src={AppLogo} alt="App Logo" className="w-24 mt-4"/>
                 </div>
-                <span className={`${!show ? 'hidden' : ''} origin-left duration-200`}>
+            </div>
+            <div className="mt-6">
+                <BackButton show={show}/>
+            </div>
+            <ul className="pt-6">
+                {menu.map((menuItem) => (
+                    <li
+                        key={menuItem.id}
+                        className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
+                        onClick={menuItem.name === 'LogOut' ? handleLogout : undefined}
+
+                    >
+                        <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
+                            <div className="min-w-[40px]">
+                                {menuItem.icon}
+                            </div>
+                            <span className={`${!show ? 'hidden' : ''} origin-left duration-200`}>
                   {menuItem.name}
                 </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
     </div>
   );
 };

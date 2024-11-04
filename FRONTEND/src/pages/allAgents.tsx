@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
+import BackButton from "../components/BackButton";
 interface User {
     id: string;
     login_id: string;
@@ -73,8 +74,8 @@ function ViewAllAgents() {
     return (
         <div className="flex h-screen">
             <div className="flex-grow p-8">
+                <BackButton />
                 <h1 className="text-2xl mb-4">All Agents</h1>
-
                 {loading ? (
                     <p>Loading agents...</p>
                 ) : error ? (
@@ -91,7 +92,7 @@ function ViewAllAgents() {
                                 <p>Phone: {agent.user.phone_number}</p>
                                 <p>Login ID: {agent.user.login_id}</p>
                                 <p>Role: {agent.user.role}</p>
-                                
+
                                 {agent.user.role !== "Merchant" && (
                                     <button
                                         onClick={() => promoteToMerchant(agent.user.id)}
