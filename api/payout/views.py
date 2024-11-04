@@ -1,16 +1,17 @@
-from pyexpat.errors import messages
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from .serializer import PayoutRequestCreateSerializer, PayoutRequestSerializer, PayoutRequestStatusSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from api.models import PayoutRequest
-from ..account.permissions import IsAdmin
+from api.models import PayoutRequest, PayoutSettings, Ticket
 from django.db import transaction
-from rest_framework import serializers
+from django.core.exceptions import ValidationError
+from django.db import DatabaseError
+from django.utils import  timezone
+from api.utilities import calculate_salary
+
 
 
 @swagger_auto_schema(
@@ -22,7 +23,6 @@ from rest_framework import serializers
     }
 )
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def request_payout(request):
     """
     Request a payout based on the user's bonus balance.
@@ -43,17 +43,64 @@ def request_payout(request):
     if serializer.is_valid():
         payout_request = serializer.save(user=request.user)
         return Response({"message": "Payout request created successfully.",
-                         "payout_id": payout_request.payment_id,
-                         "payout_request": serializer.data,
+                         "payment_id": payout_request.payment_id,
+                         "payout_details": serializer.data,
                          "requested_at": payout_request.requested_at,
-                         "status": payout_request.status
-
+                         "status": payout_request.status,
                          },
                         status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    method='get',
+    operation_summary="Retrieve Payout Request by ID",
+    operation_description="Fetch a specific payout request by its ID for authenticated users.",
+    responses={
+        200: openapi.Response(
+            description="Details of the payout request.",
+            schema=PayoutRequestSerializer(),
+        ),
+        404: openapi.Response(
+            description="Payout request not found."
+        ),
+        400: openapi.Response(
+            description="Invalid input."
+        ),
+        500: openapi.Response(
+            description="A database error occurred."
+        ),
+    },
+)
+@api_view(['GET'])
+def get_payout_by_id(request, payout_id):
+    """
+    Return a payout requests for the authenticated user given the ID.
 
+    **Query Parameters:**
+    - `payout_id` (str, optional): Filter requests by ID.
+
+    **Responses:**
+    - 200: Details on a payout request.
+    """
+    try:
+        payout_request = PayoutRequest.objects.get(payment_id=payout_id)
+        serializer = PayoutRequestSerializer(payout_request)
+    except PayoutRequest.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except DatabaseError:
+        return Response({"error": "A database error occurred while fetching payout requests."},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred.", "details": str(e)},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({
+        "message": "Payout request retrieved successfully.",
+        "data": serializer.data
+    }, status=status.HTTP_200_OK)
 @swagger_auto_schema(
     method='get',
     operation_summary="List Payout Requests",
@@ -81,7 +128,6 @@ def request_payout(request):
     },
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def list_payout_requests(request):
     """
     List all payout requests for the authenticated user or for all users if the user is an admin.
@@ -93,30 +139,40 @@ def list_payout_requests(request):
     **Responses:**
     - 200: A list of payout requests.
     """
-
     status_filter = request.query_params.get('status')
     user_id = request.query_params.get('user_id')
+    try:
 
-    if request.user.is_superuser:
-        # If admin, filter by user_id if provided, otherwise return all requests
-        if user_id:
-            payout_requests = PayoutRequest.objects.filter(user__id=user_id)
-        else:
+        if status_filter and status_filter not in ['pending', 'approved', 'rejected']:
+            return Response({'message': "Status must be 'approved', 'pending', or 'rejected'."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if request.user.is_superuser:
+            # Admin: filter by user_id and/or status if provided
             payout_requests = PayoutRequest.objects.all()
-    else:
-        payout_requests = PayoutRequest.objects.filter(user=request.user)
+            if user_id:
+                payout_requests = payout_requests.filter(user_id=user_id)
+            if status_filter:
+                payout_requests = payout_requests.filter(status=status_filter)
+        else:
+            payout_requests = PayoutRequest.objects.filter(user=request.user)
+            if status_filter:
+                payout_requests = payout_requests.filter(status=status_filter)
 
-    if status_filter:
-        payout_requests = payout_requests.filter(status=status_filter)
+        serializer = PayoutRequestSerializer(payout_requests, many=True)
+    except DatabaseError:
+        return Response({"error": "A database error occurred while fetching payout requests."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    serializer = PayoutRequestSerializer(payout_requests, many=True)
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred.", "details": str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
         "message": "Payout requests retrieved successfully.",
         "data": serializer.data
     }, status=status.HTTP_200_OK)
-
-
-
 @swagger_auto_schema(
     method='PUT',
     request_body=PayoutRequestStatusSerializer,
@@ -127,28 +183,31 @@ def list_payout_requests(request):
     }
 )
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAdminUser])
 def process_payout(request, payment_id):
     """
     Admin: Approve or reject a payout request.
-    Deducts the user's bonus balance if the payout is approved and returns the details of the payout request.
+    Deducts the user's bonus balance if the payout is approved and calculates the salary based on quota fulfillment.
     """
     try:
         payout_request = PayoutRequest.objects.get(payment_id=payment_id)
-    except PayoutRequest.DoesNotExist:
-        return Response({"error": "Payout request not found."}, status=status.HTTP_404_NOT_FOUND)
+    except (PayoutRequest.DoesNotExist, PayoutSettings.DoesNotExist):
+        return Response({"error": "Payout request or settings not found."}, status=status.HTTP_404_NOT_FOUND)
 
     status_value = request.data.get('status')
-    if status_value not in ['approved', 'rejected']:
-        return Response({"error": "Invalid status. Use 'approved' or 'rejected'."}, status=status.HTTP_400_BAD_REQUEST)
+    if status_value not in ['approved', 'rejected', 'pending']:
+        return Response({"error": "Invalid status. Use 'approved', 'pending', or 'rejected'."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user = payout_request.user
 
     with transaction.atomic():
         if status_value == 'approved':
-            user = payout_request.user
+            # Deduct bonus balance if payout is approved
             user.wallet.bonus_balance -= payout_request.amount
             user.wallet.save()
 
-    # Update payout request status
+    # Update payout request status and save the calculated salary amount
     payout_request.status = status_value
     payout_request.save()
 
@@ -156,13 +215,14 @@ def process_payout(request, payment_id):
         "message": f"Payout request {status_value} successfully.",
         "payment_id": payout_request.payment_id,
         "payout_request": {
-            "user":{
-                "login_id": payout_request.user.login_id,
-                "id": payout_request.user_id,
-                "name": f'{payout_request.user.first_name} {payout_request.user.last_name}',
-                "role": payout_request.user.role
+            "user": {
+                "login_id": user.login_id,
+                "id": user.id,
+                "name": f'{user.first_name} {user.last_name}',
+                "role": user.role
             },
             "amount": payout_request.amount,
+            "salary": payout_request.salary,
             "requested_at": payout_request.requested_at,
             "status": payout_request.status,
             "payment_id": payout_request.payment_id

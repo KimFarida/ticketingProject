@@ -28,13 +28,15 @@ function MerchantPage() {
                     {/* Card Section */}
                     <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-start items-center md:items-start">
                         <Card
-                        totalAgents={12}
+                        totalCount={12}
                         title="Total Vouchers sold"
+                        text="Some description or text for the card"
                         onClick={() => console.log('View All clicked')}
                         />
                         <Card
-                        totalAgents={20}
+                        totalCount={20}
                         title="Total Tickets"
+                        text="Additional description or text for this card"
                         onClick={() => console.log('View All clicked')}
                         />
                     </div>

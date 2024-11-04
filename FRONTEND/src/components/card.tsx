@@ -1,21 +1,22 @@
 import React from 'react';
 
 interface CardProps {
-  totalAgents: number;
+  totalCount: number;
   title: string;
   onClick: () => void;
+  text: string;
 }
 
-const Card: React.FC<CardProps> = ({ totalAgents, title, onClick }) => {
+const Card: React.FC<CardProps> = ({ totalCount, title, onClick, text }) => {
   return (
-    <div className="bg-blue-900 text-white text-sm  text-right rounded-lg p-5 w-full sm:w-60 text-center shadow-lg">
-      <h3 className="sm:text-sm" >{totalAgents}</h3>
+    <div className="bg-[#214F02] text-white text-sm  text-right rounded-lg p-5 w-full sm:w-60 text-center shadow-lg">
+      <h3 className="sm:text-sm" >{totalCount}</h3>
       <p className="mt-2 ">{title}</p>
       <button
-        className="bg-gray-300 text-black mt-4 py-1 px-2 rounded-xl hover:bg-gray-400 transition text-sm sm:text-base"
+        className="bg-[#000000] text-white mt-4 py-1 px-2 rounded-xl hover:bg-gray-400 transition text-sm sm:text-base"
         onClick={onClick}
       >
-        View All
+        {text}
       </button>
     </div>
   );

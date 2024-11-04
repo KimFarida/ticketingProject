@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from .serializer import CreateTicketTypeSerializer, TicketSerializer, CreateTicketSerializer
@@ -15,6 +15,8 @@ from django.db import transaction
 import traceback
 
 import logging
+
+from ..account.permissions import IsAgent
 
 # Create a logger instance
 logger = logging.getLogger(__name__)
@@ -28,7 +30,7 @@ logger = logging.getLogger(__name__)
     }
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def create_ticket_type(request):
     """
     Create a new Ticket Type.
@@ -60,7 +62,6 @@ def create_ticket_type(request):
     responses={200: CreateTicketTypeSerializer(many=True)}
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def list_ticket_types(request):
     """
     List all Ticket Types with optional filtering.
@@ -85,7 +86,7 @@ def list_ticket_types(request):
     responses={200: "Success"}
 )
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def update_ticket_type(request, id):
     """
     Update a Ticket Type by ID.
@@ -105,7 +106,16 @@ def update_ticket_type(request, id):
     serializer = CreateTicketTypeSerializer(ticket_type, data=request.data, partial=True)
     if serializer.is_valid():
         ticket_type = serializer.save()
-        print(ticket_type)
+
+        # Update the `valid_until` field of all tickets with this TicketType
+        Ticket.objects.filter(ticket_type=ticket_type).update(valid_until=ticket_type.expiration_date)
+
+        #If there is an increase in expiration date, should reflect for all tickets
+        if ticket_type.expiration_date > timezone.now():
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=True)
+        else:
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False)
+
         return Response({"message": "Successfully updated ticket type.",
             "updated_fields": serializer.validated_data,
             "data": serializer.data}, status=status.HTTP_200_OK)
@@ -118,7 +128,7 @@ def update_ticket_type(request, id):
     responses={204: "No Content"}
 )
 @api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def delete_ticket_type(request, id):
     """
     Delete a Ticket Type by ID.
@@ -131,20 +141,23 @@ def delete_ticket_type(request, id):
     """
     try:
         ticket_type = TicketType.objects.get(pk=id)
-        ticket_type.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        with transaction.atomic():
+            #Invalidate Every Ticket Created Using This Type and set the Ticket Type to Null
+            Ticket.objects.filter(ticket_type=ticket_type).update(valid=False, ticket_type=None)
+            ticket_type.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
     except TicketType.DoesNotExist:
         return Response({"error": "Ticket type not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-# TODO - Correct json body swagger
 @swagger_auto_schema(
     method='POST',
     request_body=CreateTicketSerializer,
     responses={201: "Success"}
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAgent])
 def create_tickets(request):
     """
     Create new tickets by an agent.
@@ -169,7 +182,7 @@ def create_tickets(request):
     # wallet.bonus_balance += Decimal(100000)
     # wallet.save()
     ticket_type_id = request.data.get('ticket_type')
-    quantity = int(request.data.get('quantity', 1))  # Default to 1 if not provided
+    quantity = int(request.data.get('quantity', 1))
     buyer_name = request.data.get('buyer_name')
     buyer_contact = request.data.get('buyer_contact')
 
@@ -315,7 +328,6 @@ def create_tickets(request):
     },
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def check_ticket_validity(request, ticket_code):
     """
     Check if a ticket is valid given its ticket_code.
@@ -327,29 +339,32 @@ def check_ticket_validity(request, ticket_code):
 
     try:
         ticket = Ticket.objects.get(ticket_code=ticket_code)
+        if ticket.ticket_type is None:
+            return Response({"error": "Ticket type deleted"}, status=status.HTTP_410_GONE)
+        ticket_info = {
+            "ticket_code": ticket.ticket_code,
+            "buyer_name": ticket.buyer_name,
+            "buyer_contact": ticket.buyer_contact,
+            "ticket_type": {
+                "id": ticket.ticket_type.id,
+                "name": ticket.ticket_type.name,
+                "description": ticket.ticket_type.description,
+            },
+            "agent": {
+                "name": f"{ticket.agent.first_name} {ticket.agent.last_name}",
+                "login_id": ticket.agent.login_id,
+            },
+            "valid_until": ticket.valid_until,
+            "created_at": ticket.created_at,
+            "updated_at": ticket.updated_at,
+        }
 
         if ticket.valid and ticket.valid_until > timezone.now():
-            ticket_info = {
-                "ticket_code": ticket.ticket_code,
-                "buyer_name": ticket.buyer_name,
-                "buyer_contact": ticket.buyer_contact,
-                "ticket_type": {
-                    "id": ticket.ticket_type.id,
-                    "name": ticket.ticket_type.name,
-                    "description": ticket.ticket_type.description,
-                },
-                "agent": {
-                    "name": f"{ticket.agent.first_name} {ticket.agent.last_name}",
-                    "login_id": ticket.agent.login_id,
-                },
-                "valid_until": ticket.valid_until,
-                "created_at": ticket.created_at,
-                "updated_at": ticket.updated_at,
-            }
             return Response({"valid": True, "ticket_info": ticket_info}, status=status.HTTP_200_OK)
         else:
-            return Response({"valid": False, "message": "Ticket is invalid or expired."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            ticket.valid = False
+            return Response({"valid": False, "ticket_info": ticket_info, "message": "Ticket is invalid or expired."},
+                            status=status.HTTP_200_OK)
 
     except Ticket.DoesNotExist:
         return Response({"error": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -416,20 +431,21 @@ def check_ticket_validity(request, ticket_code):
     },
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAgent | IsAdminUser])
 def get_agent_tickets(request):
     """
-    Retrieve tickets associated with the authenticated agent with optional date filtering.
+    Retrieve tickets associated with the authenticated agent or all tickets if the user is an admin,
+    with optional date filtering.
     """
 
-    # Fetch the authenticated agent
-    agent = Agent.objects.filter(user=request.user).first()
+    if request.user.is_staff or request.user.is_superuser:
+        tickets = Ticket.objects.all()
+    else:
+        agent = Agent.objects.filter(user=request.user).first()
+        if not agent:
+            return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not agent:
-        return Response({"error": "Agent not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # Start with all tickets for the agent
-    tickets = Ticket.objects.filter(agent=agent.user)
+        tickets = Ticket.objects.filter(agent=request.user)
 
     start_date = request.query_params.get('start_date')
     end_date = request.query_params.get('end_date')

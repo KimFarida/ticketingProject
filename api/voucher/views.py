@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from api.account.permissions import IsAdmin, IsMerchant, IsAgent
 from api.models import Voucher, Wallet
 from api.voucher.serializer import CreateVoucherSerializer, VoucherDetailSerializer, VoucherListSerializer, VoucherProcessSerializer
@@ -24,7 +24,7 @@ processed_param = openapi.Parameter(
     responses={200: VoucherListSerializer(many=True)}
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsMerchant | IsAdmin])
+@permission_classes([IsMerchant | IsAdminUser])
 def sold_vouchers(request):
     """
     Retrieve all vouchers sold by the authenticated merchant/admin.
@@ -55,7 +55,6 @@ def sold_vouchers(request):
     responses={200: VoucherListSerializer(many=True)}
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def bought_vouchers(request):
     """
     Retrieve all vouchers bought by the authenticated user.
@@ -86,7 +85,6 @@ def bought_vouchers(request):
         201: "Success"}
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 def create_voucher(request):
     """
     Create a voucher for Agents or Merchants based on their roles.
@@ -121,7 +119,6 @@ def create_voucher(request):
     responses={200: VoucherDetailSerializer()}
 )
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def get_voucher(request):
     """
     Retrieve a voucher by its ID or voucher code.
@@ -171,7 +168,7 @@ def get_voucher(request):
     }
 )
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsMerchant | IsAdmin])
+@permission_classes([IsMerchant | IsAdminUser])
 def process_voucher(request):
     serializer = VoucherProcessSerializer(data=request.data)
     if serializer.is_valid():
@@ -210,7 +207,7 @@ def process_voucher(request):
                 buyer = voucher.owner
                 buyer_wallet = Wallet.objects.get(user=voucher.owner)
 
-                bonus_percentage = Decimal('0.10') if buyer.role == "Agent" else Decimal('0.20')
+                bonus_percentage = Decimal('0.20') if buyer.role == "Agent" else Decimal('0.00')
                 buyer_wallet.voucher_balance += voucher.amount
                 buyer_wallet.bonus_balance += voucher.amount * bonus_percentage
                 buyer_wallet.save()

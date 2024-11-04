@@ -4,14 +4,15 @@ from api.models import PayoutRequest
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
-from api.utilities import generate_payment_id
+from api.utilities import generate_payment_id, calculate_salary
 from api.admin.serializer import UserDSerializer
+
 
 class PayoutRequestSerializer(serializers.ModelSerializer):
     user = UserDSerializer(read_only=True)
     class Meta:
         model = PayoutRequest
-        fields = ['amount', 'requested_at', 'status', 'payment_id', 'user']
+        fields = ['amount', 'requested_at', 'status', 'payment_id', 'user', 'salary']
 
 class PayoutRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,11 +39,30 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
     #     return attrs
 
     def create(self, validated_data):
+        user = self.context['request'].user
+        salary, tickets_sold,monthly_quota  = calculate_salary(user)
+
         validated_data['payment_id'] = generate_payment_id()
+        validated_data['salary'] = salary
 
-        payout_request = PayoutRequest.objects.create(**validated_data)
+        self.salary_info = {
+            "salary": salary,
+            "tickets_sold": tickets_sold,
+            "monthly_quota": monthly_quota
+        }
 
-        return payout_request
+        return PayoutRequest.objects.create(**validated_data)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+
+        if hasattr(self, 'salary_info'):
+            rep.update({
+                "salary": self.salary_info["salary"],
+                "tickets_sold": self.salary_info["tickets_sold"],
+                "monthly_quota": self.salary_info["monthly_quota"]
+            })
+
+        return rep
 class PayoutRequestStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=['approved', 'rejected'])

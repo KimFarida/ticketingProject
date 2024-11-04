@@ -103,10 +103,20 @@ class PayoutRequest(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payout_requests')
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    salary = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     requested_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class PayoutSettings(models.Model):
+    monthly_quota = models.PositiveIntegerField(default=210)
+    full_salary = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    partial_salary_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=20.00)
+
+    def __str__(self):
+        return f"Quota: {self.monthly_quota}, Full Salary: {self.full_salary}, Partial Percentage: {self.partial_salary_percentage}%"
+
 
 
 
