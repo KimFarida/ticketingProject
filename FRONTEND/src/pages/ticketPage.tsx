@@ -9,6 +9,7 @@ import TicketValidator from '../components/ticketValidator';
 import TicketCreationModal from "@/components/createdTicketModal.tsx";
 import api from '../api/axios';
 import {TicketType, Ticket, CreateTicketFormData, TicketTypeFormData, TicketCreationResponse} from '../types/types';
+import TicketFilter from "@/components/ticketFilter";
 
 const menuItems = (userRole: string | null) => {
     if (userRole === "Admin") return menuAdmin;
@@ -18,8 +19,9 @@ const menuItems = (userRole: string | null) => {
 
 function UnifiedTicketPage() {
     const [tickets, setTickets] = useState<TicketType[]>([]);
-    const [filteredTickets, setFilteredTickets] = useState<TicketType[]>([]);
+    const [filteredTicketTypes, setFilteredTicketTypes] = useState<TicketType[]>([]);
     const [agentTickets, setAgentTickets] = useState<Ticket[]>([]);
+    const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
     const [showCreateTicketModal, setShowCreateTicketModal] = useState(false);
     const [showTicketTypeModal, setShowTicketTypeModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
@@ -67,14 +69,19 @@ function UnifiedTicketPage() {
             ticket.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ticket.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
-        setFilteredTickets(filtered);
+        setFilteredTicketTypes(filtered);
     }, [searchQuery, tickets]);
+
+
+    useEffect(() => {
+        setFilteredTickets(agentTickets);
+    }, [agentTickets]);
 
     const fetchTicketTypes = async () => {
         try {
             const response = await api.get('/api/ticket/ticket-types/list/');
             setTickets(response.data);
-            setFilteredTickets(response.data);
+            setFilteredTicketTypes(response.data);
         } catch (error) {
             console.error('Error fetching ticket types:', error);
             setErrorMessage('Failed to load ticket types');
@@ -114,7 +121,7 @@ function UnifiedTicketPage() {
                     quantity: 1,
                     ticket_type: '',
                 });
-                fetchAgentTickets();
+                await fetchAgentTickets();
             }
         } catch (error: any) {
             setErrorMessage(error.response?.data?.error || 'Failed to create ticket');
@@ -137,7 +144,7 @@ function UnifiedTicketPage() {
             }
             setShowTicketTypeModal(false);
             resetTypeFormData();
-            fetchTicketTypes();
+            await fetchTicketTypes();
         } catch (error: any) {
             setErrorMessage(error.response?.data?.error || 'Failed to manage ticket type');
         }
@@ -147,7 +154,7 @@ function UnifiedTicketPage() {
         if (window.confirm('Are you sure you want to delete this ticket type?')) {
             try {
                 await api.delete(`/api/ticket/ticket-type/${id}/delete/`);
-                fetchTicketTypes();
+                await fetchTicketTypes();
             } catch (error) {
                 setErrorMessage('Failed to delete ticket type');
             }
@@ -242,10 +249,10 @@ function UnifiedTicketPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredTickets.map((ticket) => (
+                    {filteredTicketTypes.map((ticketType) => (
                         <TicketTypeCard
-                            key={ticket.id}
-                            ticket={ticket}
+                            key={ticketType.id}
+                            ticket={ticketType}
                             isAdmin={isAdmin}
                             onEdit={handleEditTicketType}
                             onDelete={handleDeleteTicketType}
@@ -259,7 +266,11 @@ function UnifiedTicketPage() {
                         <h2 className="text-2xl font-bold mb-4">My Tickets</h2>
                        <TicketValidator/>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {agentTickets.map((ticket) => (
+                            <TicketFilter
+                              tickets={agentTickets}
+                              onFilteredTicketsChange={setFilteredTickets}
+                            />
+                            {filteredTickets.map((ticket) => (
                                 <div
                                     key={ticket.ticket_code}
                                     className="bg-[#214F02] text-white shadow-md p-4 rounded-md"
