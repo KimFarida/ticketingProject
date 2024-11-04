@@ -29,6 +29,7 @@ function UnifiedTicketPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [role, setRole] = useState<string | null>(null);
 
     const [ticketFormData, setTicketFormData] = useState<CreateTicketFormData>({
         buyer_name: '',
@@ -49,12 +50,13 @@ function UnifiedTicketPage() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('userRole');
+        setRole(role)
         setIsAdmin(role === 'Admin');
 
         if (token) {
             api.defaults.headers.common['Authorization'] = `Token ${token}`;
             fetchTicketTypes();
-            if (role !== 'Admin') {
+            if (role !== 'Merchant') {
                 fetchAgentTickets();
             }
         }
@@ -252,7 +254,7 @@ function UnifiedTicketPage() {
                     ))}
                 </div>
 
-                {!isAdmin && (
+                {role != 'Merchant' && (
                     <div className="mt-8">
                         <h2 className="text-2xl font-bold mb-4">My Tickets</h2>
                        <TicketValidator/>
