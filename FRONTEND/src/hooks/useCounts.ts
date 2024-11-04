@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 
-const useCounts = (apiEndpoints: string[]) => {
+const useCounts = (apiEndpoints: string[], dependencyKey: number) => {
   const [counts, setCounts] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCounts = async () => {
+      setLoading(true);
       try {
         const responses = await Promise.all(apiEndpoints.map(endpoint => api.get(endpoint)));
         const newCounts = responses.map(response => {
@@ -34,7 +35,7 @@ const useCounts = (apiEndpoints: string[]) => {
     };
 
     fetchCounts();
-  }, [apiEndpoints]);
+  }, [apiEndpoints, dependencyKey]);
 
   return { counts, loading, error };
 };

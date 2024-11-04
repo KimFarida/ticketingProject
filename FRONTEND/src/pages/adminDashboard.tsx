@@ -9,20 +9,23 @@ import { menuAdmin } from "../components/sidebar.tsx"
 function AdminPage() {
 
   const navigate = useNavigate();
-
+  const [dependencyKey, setDependencyKey] = useState(0);
   const menuItems = menuAdmin;
   
 
   const handleViewAllAgent = () => {   
     navigate("/view-all-agents");
+    setDependencyKey(prev => prev + 1);
   };
 
   const handleViewAllMerchant = () => {
     navigate("/view-all-merchants");
+    setDependencyKey(prev => prev + 1);
   };
 
   const handleViewAllTicket = () => {
     navigate("/ticket");
+    setDependencyKey(prev => prev + 1);
   }
 
   const apiEndpoints = [
@@ -31,7 +34,7 @@ function AdminPage() {
     '/api/ticket/get-agent-tickets/',
   ];
 
-  const { counts, loading, error } = useCounts(apiEndpoints); // Use the custom hook
+  const { counts, loading, error } = useCounts(apiEndpoints, dependencyKey); // Use the custom hook
 
   if (loading) {
     return <div>Loading...</div>; // Show loading state
