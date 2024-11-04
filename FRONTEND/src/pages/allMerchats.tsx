@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
+import BackButton from "@/components/backButton.tsx";
 
 interface User {
     id: string; 
@@ -44,6 +45,7 @@ function ViewAllMerchants() {
     return (
         <div className="flex h-screen">
             <div className="flex-grow p-8">
+                <BackButton/>
                 <h1 className="text-2xl mb-4">All Merchants</h1>
 
                 {loading ? (

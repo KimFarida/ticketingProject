@@ -31,9 +31,9 @@ ENVIRONMENT = os.getenv('DJANGO_ENV', 'development')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '102.130.118.149', 'profitplay9ja.com.ng', 'www.profitplay9ja.com.ng']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -101,26 +101,26 @@ CSRF_TRUSTED_ORIGINS = [
     "https://ticketing-project-omega.vercel.app",
 ]
 
-#PRODUCTION
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    'https://profitplay9ja.com.ng',
-    'https://www.profitplay9ja.com.ng',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'https://ticketing-project-omega.vercel.app',
-]
+# #PRODUCTION
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     'https://profitplay9ja.com.ng',
+#     'https://www.profitplay9ja.com.ng',
+#     'http://localhost:5173',
+#     'http://localhost:5174',
+#     'https://ticketing-project-omega.vercel.app',
+# ]
 
 #DEVELOPMENT
-# CORS_ORIGIN_ALLOW_ALL = True
-# SECURE_SSL_REDIRECT = False
-# SESSION_COOKIE_SECURE = False
-# CSRF_COOKIE_SECURE = False
+CORS_ORIGIN_ALLOW_ALL = True
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 
 
