@@ -31,7 +31,7 @@ const PayoutRequestModal: React.FC<PayoutRequestModalProps> = ({
                     <p><strong>Salary:</strong> &#8358;{payoutRequest.payout_details.salary}</p>
                     <p><strong>Tickets Sold:</strong> {payoutRequest.payout_details.tickets_sold}</p>
                     <p><strong>Monthly Ticket Quota:</strong> {payoutRequest.payout_details.monthly_quota}</p>
-                    <em className="mt-4 text-sm">You get 20% of your salary if you do not meet the ticket quota</em>
+                    <em className="mt-4 text-sm">You get full salary on meeting the ticket quota, 20% of your salary if you meet half the ticket quota and no salary otherwise.</em>
                 </div>
 
             </div>
