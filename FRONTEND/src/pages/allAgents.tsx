@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import  api from '../api/axios';
 import BackButton from "@/components/backButton";
+import {Link} from "react-router-dom";
+import AppLogo from "@/images/profitplaylogo.png";
 interface User {
     id: string;
     login_id: string;
@@ -74,7 +76,14 @@ function ViewAllAgents() {
     return (
         <div className="flex h-screen">
             <div className="flex-grow p-8">
-                <BackButton />
+                <div className='header'>
+                    <Link to={'/'}>
+                        <div>
+                            <img src={AppLogo} alt="App Logo" className="w-24"/>
+                        </div>
+                    </Link>
+                </div>
+                <BackButton/>
                 <h1 className="text-2xl mb-4">All Agents</h1>
                 {loading ? (
                     <p>Loading agents...</p>
