@@ -144,3 +144,9 @@ export interface PayoutList {
     data : PayoutDetails []
 }
 
+export interface PayoutSettings {
+    monthly_quota: number;
+    full_salary: number;
+    partial_salary_percentage: number;
+
+}
