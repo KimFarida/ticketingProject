@@ -59,9 +59,10 @@ export function Payout() {
             setAmount("");
         } catch (err) {
             const error = err as AxiosError;
+            console.log(error)
 
             // Use optional chaining to safely access the error response
-            const reason = (error.response?.data as any)?.amount?.[0];
+            const reason = (error.response?.data as any)?.amount?.[0]|| (error.response?.data as any)?.non_field_errors?.[0];
             if (reason) {
                 setError(reason);
             } else {
