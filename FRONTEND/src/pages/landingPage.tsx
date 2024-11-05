@@ -4,7 +4,7 @@ import './signUp.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBars, faTimes} from '@fortawesome/free-solid-svg-icons'
 import petImage from '../images/profit play.png'
-import AppLogo from '../images/profitplaylogo.png'
+import AppLogo from '../images/profitplay-black.png'
 import TextCarousel from '../components/textCarousel';
 import ScrollAnimation from '../components/logoAnimation';
 import TicketValidator from '../components/ticketValidator'
