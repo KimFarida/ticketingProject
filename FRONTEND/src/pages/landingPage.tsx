@@ -26,11 +26,12 @@ function LandingPage(){
                             Unlock the reward of luck
                         </p>
 
-
-                        <button
-                            className="m-4 bg-[#607714] text-white py-2 px-4 rounded-md md:py-3 md:px-8 md:rounded-full transition duration-300 whitespace-nowrap">
-                            Get Lucky, Get Reward!
-                        </button>
+                        <Link to={'/signup'}>
+                            <button
+                                className="m-4 bg-[#607714] text-white py-2 px-4 rounded-md md:py-3 md:px-8 md:rounded-full transition duration-300 whitespace-nowrap">
+                                Get Lucky, Get Reward!
+                            </button>
+                        </Link>
                         {(TicketValidator())}
                     </div>
                 </div>
@@ -58,7 +59,7 @@ function LandingPage(){
                             <p className="text-base md:text-lg lg:text-xl mb-8">
                                 Experience thrilling games, expertly designed for maximum reward
                             </p>
-                            <Link to={"/signup"}>
+                            <Link to={'https://t.me/profitplay9ja'}>
                                 <button
                                     className="bg-[#607714] text-white py-2 px-4 sm:py-3 sm:px-8 rounded-full hover:bg-orange-600 transition duration-300">
                                     Join the Profit Play family!
@@ -84,9 +85,11 @@ function LandingPage(){
                         <div className="col-span-1">
                             <h3 className="font-semibold text-lg mb-4">Company</h3>
                             <ul className="space-y-2">
-                                <li className="hover:text-gray-300 cursor-pointer transition-colors">
-                                    About Us
-                                </li>
+                                <Link to={'/about-us'}>
+                                    <li className="hover:text-gray-300 cursor-pointer transition-colors">
+                                        About Us
+                                    </li>
+                                </Link>
                                 <li className="hover:text-gray-300 cursor-pointer transition-colors">
                                     How it works
                                 </li>
