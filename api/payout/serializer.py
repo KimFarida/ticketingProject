@@ -3,9 +3,10 @@ from rest_framework import serializers
 from api.models import PayoutRequest
 from decimal import Decimal
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, time
 from api.utilities import generate_payment_id, calculate_salary
 from api.admin.serializer import UserDSerializer
+
 
 
 class PayoutRequestSerializer(serializers.ModelSerializer):
@@ -32,11 +33,25 @@ class PayoutRequestCreateSerializer(serializers.ModelSerializer):
 
         return value
 
-    # def validate(self, attrs):
-    #     now = timezone.now()
-    #     if now.month == (now + timedelta(days=1)).month:
-    #         raise serializers.ValidationError("Payout requests can only be made at the end of the month.")
-    #     return attrs
+    def validate(self, attrs):
+        now = timezone.now()
+
+        # Calculate the first day of the next month and subtract a day to get the last day of the current month
+        first_day_of_next_month = (now.replace(day=1) + timedelta(days=32)).replace(day=1)
+        last_day_of_month = first_day_of_next_month - timedelta(days=1)
+
+        # Check if today is the last day of the month
+        if now.date() != last_day_of_month.date():
+            raise serializers.ValidationError("Payout requests can only be made on the last day of the month.")
+
+        # Check if the current time is within the valid range for payout requests
+        if not (time(0, 0) <= now.time() <= time(23, 59)):
+            raise serializers.ValidationError(
+                "Payout requests can only be made between 00:00 and 23:59 on the last day of the month.")
+
+        #check if the person has already made a payout request before
+
+        return attrs
 
     def create(self, validated_data):
         user = self.context['request'].user
