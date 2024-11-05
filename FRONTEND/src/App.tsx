@@ -6,7 +6,7 @@ import SignInPage from "./pages/signInPage";
 import AdminPage from "./pages/adminDashboard";
 import AgentPage from "./pages/agentDashboard";
 import ViewAllAgents from "./pages/allAgents";
-import ViewAllMerchants from "./pages/allMerchats";
+import ViewAllMerchants from "./pages/allMerchants.tsx";
 import ProfilePage from "./pages/profile";
 import UnifiedTicketPage from "./pages/ticketPage";
 import { AdminTicketPage } from "./pages/adminTicketPage";
