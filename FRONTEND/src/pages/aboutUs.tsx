@@ -1,48 +1,22 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faBars, faTimes, faBriefcase, faChartLine, faBullseye, faCreditCard} from '@fortawesome/free-solid-svg-icons'
-import AppLogo from '../images/profitplaylogo.png'
+import {faBriefcase, faChartLine, faBullseye, faCreditCard} from '@fortawesome/free-solid-svg-icons'
 import Image from '../images/img.png'
+import NavBar from "@/components/navBar.tsx";
 
 function AboutUs(){
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    const onToggleMenu = () => {
-        console.log('Menu toggled');
-        
-        setIsMenuOpen(!isMenuOpen);
-    };
     return (
         <>
             <div className='bg-[#000000]'>
-                <nav className="flex justify-between items-center w-[92%] mx-auto">
-                        <div>
-                        <img src={AppLogo} alt="App Logo" className="w-24 " />
-                        </div>
-                        <div className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${ isMenuOpen ? 'top-[9%] w-full bg-[#000000] z-50' : 'top-[-100%] w-full'} md:w-auto w-full flex items-center px-5`}>
-                            <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-white">
-                                <li><Link to='/'><a>Home</a></Link></li>
-                                {/*<li><a href="#"></a>Become an Agent</li>*/}
-                                <li><a href="#">Contact Us</a></li>
-                                <li><Link to='/about-us'><a>About Us</a></Link></li>
-                            </ul>
-                            
-                        </div>
-                        <div className='flex items-center gap-3 py-2'>
-                            <Link to="/signin" className='border-2 px-2 border-[#6AE803] ml-2 rounded text-white whitespace-nowrap'>
-                                <button>LOG IN</button>
-                            </Link>
-                            <button><Link to="/signup" className="bg-[#6AE803] text-white px-5 py-2 rounded-full hover:bg-[#58D106] whitespace-nowrap"> Sign Up</Link></button>
-                            <FontAwesomeIcon icon= {isMenuOpen ? faTimes : faBars} className='text-3xl text-white cursor-pointer md:hidden' onClick={onToggleMenu} />
-                        </div>
-                    </nav>
-                    <div className="flex flex-col md:flex-row items-center justify-between m-10 text-white">
-                        <div className="md:w-1/2 text-left p-4">
-                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4">
-                                --About Us--
-                            </h2>
-                            <p className="text-base md:text-lg lg:text-xl mb-8">About Profit Play Profit Play, subscription funding has introduced a new construct to the way that people and businesses control finance. Our unique model merges domain proficiency, state of the art technology and customisable delivery to ensure maximum financial outcome.</p>
+                <NavBar/>
+                <div className="flex flex-col md:flex-row items-center justify-between m-10 text-white">
+                    <div className="md:w-1/2 text-left p-4">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4">
+                            --About Us--
+                        </h2>
+                        <p className="text-base md:text-lg lg:text-xl mb-8">About Profit Play Profit Play, subscription
+                            funding has introduced a new construct to the way that people and businesses control
+                            finance. Our unique model merges domain proficiency, state of the art technology and customisable delivery to ensure maximum financial outcome.</p>
                         </div>
                         <div className="md:w-1/2 flex justify-center md:justify-end mt-4 md:mt-0 p-4">
                                 <img src={Image} alt="Description" className="w-full h-auto rounded-lg" />
@@ -140,7 +114,7 @@ function AboutUs(){
                 </div>
                 <div className=" w-full flex justify-center">
                     <div className="w-full md:w-3/4 lg:w-2/3 p-2 flex flex-start justify-between">
-                    <Link to="/signup">
+                    <Link to={"/signup"}>
                                 <button className="bg-[#607714] text-white py-2 px-4 sm:py-3 sm:px-8 rounded-full hover:bg-orange-600 transition duration-300">
                                 Join the Profit Play family!
                                 </button>
