@@ -1,7 +1,9 @@
 import {useState, useEffect, ReactElement} from 'react';
+import { Link } from 'react-router-dom';
 import BackButton from './backButton';
+import useLogout from "@/hooks/logOut.ts";
 import open from '../images/greater-than.png';
-import AppLogo from '../images/profitplaylogo.png';
+import AppLogo from '../images/profitplay-black.png';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   faCreditCard,
@@ -12,8 +14,6 @@ import {
   faUsers,
   faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
-import api from '@/api/axios';
-import { useNavigate } from 'react-router-dom';
 
 interface Menus {
   id: number;
@@ -57,7 +57,8 @@ export const menuAgent = [
 
 const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
   const [show, setShow] = useState(true);
-  const navigate = useNavigate();
+
+  const handleLogout = useLogout();
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,18 +74,6 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  const handleLogout = async () => {
-    try {
-        await api.post("/account/logout/"); // Call the logout API
-        localStorage.clear(); // Clear all auth data
-        navigate('/signin', { replace: true }); // Redirect to sign-in
-    } catch (error) {
-        console.error("Logout error:", error);
-        localStorage.clear();
-        navigate('/signin', { replace: true });
-    }
-};
 
   const sidebarClasses = `
     ${show ? 'w-44' : 'w-16'} 
@@ -101,7 +90,11 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
             />
             <div className="flex gap-x-4 ml-2 items-center">
                 <div>
-                    <img src={AppLogo} alt="App Logo" className="w-24 mt-4"/>
+                    <Link to='/'>
+                        <a>
+                            <img src={AppLogo} alt="App Logo" className="w-24 mt-4"/>
+                        </a>
+                    </Link>
                 </div>
             </div>
             <div className="mt-6">
@@ -113,7 +106,6 @@ const SidebarComponent: React.FC<SidebarProps> = ({ menu }) => {
                         key={menuItem.id}
                         className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-6 hover:bg-white hover:text-black rounded-md hover:border hover:border-gray-400"
                         onClick={menuItem.name === 'LogOut' ? handleLogout : undefined}
-
                     >
                         <a href={menuItem.link} className="flex items-center gap-x-4 w-full">
                             <div className="min-w-[40px]">
