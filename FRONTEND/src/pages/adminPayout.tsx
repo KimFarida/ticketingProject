@@ -1,18 +1,24 @@
 import {useEffect, useState} from "react";
 import SidebarComponent, {menuAdmin} from "../components/sidebar";
+import { Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import api from '../api/axios';
-import {PayoutList} from "@/types/types.ts";
+import {PayoutDetails, PayoutSettings} from "@/types/types.ts";
 import PayoutSearch from "@/components/payoutSearch";
 import StatusToggle from "@/components/statusToggle";
 import PayOutDetailsModal from "@/components/payoutDetailsModal";
+import PayoutSettingsModal from "@/components/payoutSettingsModal.tsx";
 
 export function AdminPayout() {
-  const [payoutList, setPayoutList] = useState<PayoutList[]>([]);
+  const [payoutList, setPayoutList] = useState<PayoutDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("pending");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedPayout, setSelectedPayout] = useState<PayoutList | null>(null);
+  const [selectedPayout, setSelectedPayout] = useState<PayoutDetails | null>(null);
+  const [showPayoutSettings, setShowPayoutSettings] = useState(false);
+  const [currentSettings, setCurrentSettings] = useState<PayoutSettings | null>(null);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -53,7 +59,7 @@ export function AdminPayout() {
     }
   };
 
-  const handleViewDetails = (payout: PayoutList) => {
+  const handleViewDetails = (payout: PayoutDetails) => {
     setSelectedPayout(payout);
     setIsModalVisible(true);
   };
@@ -63,6 +69,22 @@ export function AdminPayout() {
     setIsModalVisible(false);
   };
 
+  const handleUpdateSettings = async (settings: PayoutSettings) => {
+      try {
+          const response = await api.post('/api/admin/update-payout-settings/', null, {
+            params: {
+                monthly_quota: settings.monthly_quota,
+                full_salary: settings.full_salary,
+                partial_salary_percentage: settings.partial_salary_percentage
+            }
+        });
+        setCurrentSettings(response.data.settings);
+      } catch (error: any) {
+          throw new Error(error.response?.data?.message || 'Failed to update settings');
+      }
+};
+
+
   return (
     <div className="flex h-screen">
       <SidebarComponent menu={menuAdmin} />
@@ -70,6 +92,14 @@ export function AdminPayout() {
         <h1 className="text-2xl font-bold mb-4">Payout Management</h1>
 
         <section className="mb-8">
+          <Button
+                onClick={() => setShowPayoutSettings(true)}
+                className="bg-[#000000] text-white hover:bg-gray-800 flex items-center gap-2"
+          >
+            <Settings className="w-4 h-4" />
+                Update Payout Settings
+          </Button>
+
           <h2 className="text-xl font-semibold mb-2">Search Payout</h2>
           <PayoutSearch />
           {loading && <p>Processing payment...</p>}
@@ -125,6 +155,12 @@ export function AdminPayout() {
           />
         )}
       </div>
+        <PayoutSettingsModal
+          isOpen={showPayoutSettings}
+          onClose={() => setShowPayoutSettings(false)}
+          onSubmit={handleUpdateSettings}
+          currentSettings={currentSettings}
+        />
     </div>
   );
 }
