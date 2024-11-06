@@ -187,9 +187,11 @@ function SignUpPage() {
     return (
         <div>
             <div className='header'>
-                <div>
-                    <img src={AppLogo} alt="App Logo" className="w-24" />
-                </div>
+                <Link to={'/'}>
+                    <div>
+                        <img src={AppLogo} alt="App Logo" className="w-24"/>
+                    </div>
+                </Link>
             </div>
             <div className='container'>
                 <form onSubmit={handleSignUp} className='form'>

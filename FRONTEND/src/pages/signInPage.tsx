@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import  api from '../api/axios';
 import { isAxiosError } from "axios";
 import AppLogo from '../images/profitplaylogo.png'
@@ -45,6 +45,7 @@ function SignInPage() {
         localStorage.setItem("token", token);
         localStorage.setItem("currentUserId", response.data.user_id);
         localStorage.setItem("userRole", response.data.user_role);
+        localStorage.setItem("loggedIn", "true")
 
         // Set the default Authorization header for future requests
         api.defaults.headers.common["Authorization"] = `Token ${token}`;
@@ -81,7 +82,9 @@ function SignInPage() {
       <div>
         <div className="header">
             <div>
-              <img src={AppLogo} alt="App Logo" className="w-24" />
+              <Link to={'/'}>
+                <img src={AppLogo} alt="App Logo" className="w-24"/>
+              </Link>
             </div>
         </div>
         <div className="container">
